@@ -4,7 +4,7 @@ const scrapeButtonsData = [
     id: "am-prem",
     title: "AlightMotion premium...",
     description: "Otomatis generate akun, kirim verifikasi, cek inbox, dan verifikasi otomatis",
-    author: "Zenn",
+    author: "arcvn",
     method: "ANY", // Pilihan: ALL, GET, POST, PUT, PATCH, DELETE, atau ANY
     previewUrl: "#",
     targetUrl: "amprem.html" // Link tujuan saat button diklik
