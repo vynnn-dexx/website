@@ -17,14 +17,5 @@ const scrapeButtonsData = [
     method: "POST",
     previewUrl: "#",
     targetUrl: "reatch.html"
-  },
-  {
-    id: "tik-tok-downloader",
-    title: "TikTok No Watermark HD",
-    description: "Scraper TikTok tanpa watermark dengan kecepatan unduh ultra tinggi",
-    author: "ARCVN",
-    method: "GET",
-    previewUrl: "#",
-    targetUrl: "tiktok.html"
   }
 ];
