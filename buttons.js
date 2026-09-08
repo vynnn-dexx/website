@@ -7,16 +7,16 @@ const scrapeButtonsData = [
     author: "Zenn",
     method: "ANY", // Pilihan: ALL, GET, POST, PUT, PATCH, DELETE, atau ANY
     previewUrl: "#",
-    targetUrl: "alightmotion.html" // Link tujuan saat button diklik
+    targetUrl: "amprem.html" // Link tujuan saat button diklik
   },
   {
-    id: "capcut-pro",
-    title: "CapCut Pro Auto Join",
-    description: "Bypass invite link dan otomatis bergabung dengan ruang kerja tim Pro",
+    id: "reatch wa",
+    title: "reatch ch whatsapp",
+    description: "Bypass reatch whatsApp channel",
     author: "ARCVN",
     method: "POST",
     previewUrl: "#",
-    targetUrl: "capcut.html"
+    targetUrl: "reatch.html"
   },
   {
     id: "tik-tok-downloader",
