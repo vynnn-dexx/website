@@ -13,43 +13,43 @@
 
   <style>
     /* ==========================================================================
-       1. SYSTEM DESIGN TOKENS
+       1. SYSTEM DESIGN TOKENS (GLOWING WHITE EDITION)
        ========================================================================== */
     :root {
-      --bg-core: #030303;
-      --bg-card: rgba(10, 10, 10, 0.95);
-      --bg-input: #0a0a0a;
-      --bg-terminal: #020202;
-      --bg-button: #111111;
+      --bg-core: #050505;
+      --bg-card: rgba(15, 15, 15, 0.94);
+      --bg-input: #0c0c0c;
+      --bg-terminal: #030303;
+      --bg-button: #121212;
 
-      --red-primary: #8b0000;
-      --red-bright: #cc0000;
-      --red-glow: #ff0033;
-      --red-dark-glow: rgba(139, 0, 0, 0.35);
+      --white-primary: #ffffff;
+      --white-glow: rgba(255, 255, 255, 0.8);
+      --white-soft-glow: rgba(255, 255, 255, 0.25);
+      --border-subtle: rgba(255, 255, 255, 0.15);
 
       --text-main: #ffffff;
-      --text-sub: #a3a3a3;
-      --text-muted: #666666;
+      --text-sub: #cccccc;
+      --text-muted: #777777;
 
       --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
 
-      --radius-sm: 6px;
-      --radius-md: 10px;
-      --radius-lg: 14px;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
 
-      --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      --transition-normal: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-fast: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     /* ==========================================================================
-       2. GLOBAL RESET (PURE NO BORDER)
+       2. GLOBAL RESET & SMOOTH CANVAS
        ========================================================================== */
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      border: none !important; /* Hapus border secara total */
+      border: none;
       outline: none;
       font-family: var(--font-sans);
       -webkit-font-smoothing: antialiased;
@@ -64,23 +64,24 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 16px;
+      padding: 20px;
       overflow-x: hidden;
       position: relative;
     }
 
-    /* Background Ambient Crimson Glow */
+    /* Ambient Glowing White Aura Background */
     body::before {
       content: '';
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(139, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
+      width: 550px;
+      height: 550px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
       pointer-events: none;
       z-index: 0;
+      transition: opacity var(--transition-smooth);
     }
 
     /* ==========================================================================
@@ -91,24 +92,27 @@
       top: 0;
       left: 0;
       width: 100%;
-      height: 54px;
-      background: rgba(3, 3, 3, 0.9);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      height: 58px;
+      background: rgba(5, 5, 5, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 20px;
+      padding: 0 24px;
       z-index: 500;
+      transition: background var(--transition-fast);
     }
 
     .btn-back {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      background: rgba(139, 0, 0, 0.12);
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
       color: var(--text-main);
-      padding: 6px 12px;
+      padding: 7px 14px;
       border-radius: var(--radius-sm);
       font-size: 0.725rem;
       font-weight: 700;
@@ -116,12 +120,13 @@
       cursor: pointer;
       transition: var(--transition-fast);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.6px;
     }
 
     .btn-back:hover {
-      background: var(--red-primary);
-      box-shadow: 0 0 12px var(--red-dark-glow);
+      background: #ffffff;
+      color: #000000;
+      box-shadow: 0 0 15px var(--white-glow);
     }
 
     .nav-status {
@@ -130,21 +135,21 @@
       color: var(--text-muted);
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
 
     .status-dot {
-      width: 7px;
-      height: 7px;
-      background-color: var(--red-bright);
+      width: 8px;
+      height: 8px;
+      background-color: #ffffff;
       border-radius: 50%;
-      box-shadow: 0 0 8px var(--red-bright);
-      animation: blink 1.2s infinite;
+      box-shadow: 0 0 10px #ffffff;
+      animation: pulseGlow 1.8s infinite cubic-bezier(0.4, 0, 0.6, 1);
     }
 
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 10px #ffffff; }
+      50% { opacity: 0.4; transform: scale(0.85); box-shadow: 0 0 4px #ffffff; }
     }
 
     /* ==========================================================================
@@ -152,48 +157,56 @@
        ========================================================================== */
     .main-container {
       width: 100%;
-      max-width: 420px;
-      margin-top: 60px;
+      max-width: 430px;
+      margin-top: 64px;
       z-index: 10;
     }
 
     .glass-card {
       background: var(--bg-card);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-subtle);
       border-radius: var(--radius-lg);
-      padding: 24px 20px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9), 0 0 25px rgba(139, 0, 0, 0.08);
+      padding: 28px 24px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.95), 0 0 20px rgba(255, 255, 255, 0.05);
       position: relative;
       overflow: hidden;
-      transition: var(--transition-normal);
+      transition: var(--transition-smooth);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(255, 255, 255, 0.35);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.98), 0 0 30px rgba(255, 255, 255, 0.15);
     }
 
     /* ==========================================================================
-       5. ENGINE POLLING SELECTOR (V1 / V2)
+       5. ENGINE POLLING SELECTOR
        ========================================================================== */
     .poll-selector-title {
-      font-size: 0.675rem;
-      font-weight: 700;
+      font-size: 0.65rem;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
+      letter-spacing: 1px;
       color: var(--text-sub);
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       text-align: center;
     }
 
     .poll-container {
       display: flex;
       background: var(--bg-button);
-      padding: 3px;
+      border: 1px solid var(--border-subtle);
+      padding: 4px;
       border-radius: var(--radius-md);
-      margin-bottom: 20px;
-      gap: 3px;
+      margin-bottom: 24px;
+      gap: 4px;
+      transition: border-color var(--transition-fast);
     }
 
     .poll-btn {
       flex: 1;
-      padding: 8px;
+      padding: 10px 8px;
       background: transparent;
       color: var(--text-muted);
       font-size: 0.75rem;
@@ -210,13 +223,23 @@
     .poll-btn span.sub-text {
       font-size: 0.6rem;
       font-weight: 400;
-      opacity: 0.65;
+      opacity: 0.7;
+      transition: opacity var(--transition-fast);
+    }
+
+    .poll-btn:hover:not(.active) {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.04);
     }
 
     .poll-btn.active {
-      background: linear-gradient(180deg, var(--red-bright) 0%, var(--red-primary) 100%);
-      color: var(--text-main);
-      box-shadow: 0 3px 12px var(--red-dark-glow);
+      background: linear-gradient(180deg, #ffffff 0%, #d8d8d8 100%);
+      color: #000000;
+      box-shadow: 0 4px 16px var(--white-soft-glow);
+    }
+
+    .poll-btn.active span.sub-text {
+      opacity: 0.9;
     }
 
     /* ==========================================================================
@@ -224,47 +247,56 @@
        ========================================================================== */
     .card-header {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 22px;
     }
 
     .icon-badge {
-      width: 44px;
-      height: 44px;
-      background: rgba(139, 0, 0, 0.12);
+      width: 48px;
+      height: 48px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 0 auto 12px auto;
-      box-shadow: 0 0 15px rgba(139, 0, 0, 0.15);
+      margin: 0 auto 14px auto;
+      box-shadow: 0 0 18px rgba(255, 255, 255, 0.1);
+      transition: var(--transition-fast);
+    }
+
+    .glass-card:hover .icon-badge {
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.4);
     }
 
     .icon-badge svg {
       width: 22px;
       height: 22px;
-      fill: var(--red-bright);
+      fill: #ffffff;
+      filter: drop-shadow(0 0 6px #ffffff);
     }
 
     .card-header h1 {
-      font-size: 1.15rem;
+      font-size: 1.2rem;
       font-weight: 800;
       letter-spacing: -0.3px;
       color: var(--text-main);
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
     }
 
     .card-header p {
-      font-size: 0.75rem;
+      font-size: 0.775rem;
       color: var(--text-sub);
-      margin-top: 4px;
+      margin-top: 5px;
       font-weight: 500;
-      line-height: 1.35;
+      line-height: 1.4;
     }
 
     /* ==========================================================================
        7. FORM ELEMENTS
        ========================================================================== */
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
 
     .form-label {
@@ -272,9 +304,9 @@
       font-size: 0.675rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.6px;
+      letter-spacing: 0.8px;
       color: var(--text-sub);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
 
     .input-box {
@@ -283,7 +315,7 @@
 
     .input-box svg {
       position: absolute;
-      left: 12px;
+      left: 14px;
       top: 50%;
       transform: translateY(-50%);
       width: 16px;
@@ -294,22 +326,25 @@
 
     .input-field {
       width: 100%;
-      padding: 10px 10px 10px 38px;
+      padding: 12px 12px 12px 40px;
       background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
       border-radius: var(--radius-sm);
       color: var(--text-main);
-      font-size: 0.8rem;
+      font-size: 0.825rem;
       font-weight: 500;
       transition: var(--transition-fast);
     }
 
     .input-field:focus {
-      background: #0d0d0d;
-      box-shadow: 0 0 15px var(--red-dark-glow);
+      background: #0f0f0f;
+      border-color: #ffffff;
+      box-shadow: 0 0 16px var(--white-soft-glow);
     }
 
     .input-field:focus + svg {
-      fill: var(--red-bright);
+      fill: #ffffff;
+      filter: drop-shadow(0 0 4px #ffffff);
     }
 
     /* ==========================================================================
@@ -317,49 +352,57 @@
        ========================================================================== */
     .btn-submit {
       width: 100%;
-      padding: 11px;
-      background: linear-gradient(180deg, var(--red-bright) 0%, var(--red-primary) 100%);
-      color: var(--text-main);
+      padding: 13px;
+      background: linear-gradient(180deg, #ffffff 0%, #cccccc 100%);
+      color: #000000;
       border-radius: var(--radius-sm);
-      font-size: 0.775rem;
+      font-size: 0.8rem;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
+      letter-spacing: 1px;
       cursor: pointer;
       transition: var(--transition-fast);
-      box-shadow: 0 3px 12px var(--red-dark-glow);
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.3);
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
 
     .btn-submit:hover {
-      background: linear-gradient(180deg, #e60000 0%, #8b0000 100%);
-      box-shadow: 0 0 18px rgba(255, 0, 51, 0.4);
+      background: linear-gradient(180deg, #ffffff 0%, #e6e6e6 100%);
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.65);
+      transform: translateY(-1px);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
     }
 
     .btn-submit:disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: not-allowed;
       box-shadow: none;
+      transform: none;
     }
 
     .loading-wrapper {
       display: none;
       text-align: center;
-      padding: 16px 0;
+      padding: 20px 0;
+      animation: fadeIn var(--transition-fast);
     }
 
     .rotate-spinner {
-      width: 36px;
-      height: 36px;
-      border: 3px solid rgba(139, 0, 0, 0.15) !important;
-      border-top: 3px solid var(--red-glow) !important;
-      border-right: 3px solid var(--red-bright) !important;
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255, 255, 255, 0.12);
+      border-top: 3px solid #ffffff;
+      border-right: 3px solid #ffffff;
       border-radius: 50%;
-      margin: 0 auto 10px auto;
+      margin: 0 auto 12px auto;
       animation: spin 0.75s linear infinite;
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.25);
     }
 
     @keyframes spin {
@@ -367,45 +410,55 @@
       100% { transform: rotate(360deg); }
     }
 
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     /* ==========================================================================
        9. TERMINAL & STATUS
        ========================================================================== */
     .status-msg {
-      margin-top: 12px;
-      font-size: 0.725rem;
+      margin-top: 14px;
+      font-size: 0.75rem;
       font-weight: 700;
       text-align: center;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      min-height: 18px;
+      letter-spacing: 0.6px;
+      min-height: 20px;
+      transition: var(--transition-fast);
     }
 
     .status-msg.error {
-      color: var(--red-glow);
+      color: #ff4d4d;
+      text-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
     }
 
     .status-msg.success {
-      color: #00ff66;
+      color: #ffffff;
+      text-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
     }
 
     .terminal-box {
-      margin-top: 14px;
-      padding: 10px;
+      margin-top: 16px;
+      padding: 12px;
       background: var(--bg-terminal);
+      border: 1px solid var(--border-subtle);
       border-radius: var(--radius-sm);
       font-family: var(--font-mono);
-      font-size: 0.675rem;
+      font-size: 0.7rem;
       color: var(--text-sub);
-      max-height: 100px;
+      max-height: 110px;
       overflow-y: auto;
       white-space: pre-wrap;
       word-break: break-all;
+      transition: border-color var(--transition-fast);
     }
 
     .footer-info {
       text-align: center;
-      margin-top: 18px;
-      font-size: 0.675rem;
+      margin-top: 20px;
+      font-size: 0.7rem;
       color: var(--text-muted);
       font-family: var(--font-mono);
     }
@@ -468,8 +521,8 @@
 
       <div class="loading-wrapper" id="loadingSection">
         <div class="rotate-spinner"></div>
-        <h1 style="font-size: 0.95rem; font-weight: 800;">Executing Engine</h1>
-        <p style="font-size: 0.7rem; color: var(--text-sub); margin-top: 4px;">Connecting to ARCVN API endpoint...</p>
+        <h1 style="font-size: 0.95rem; font-weight: 800; text-shadow: 0 0 8px rgba(255,255,255,0.4);">Executing Engine</h1>
+        <p style="font-size: 0.725rem; color: var(--text-sub); margin-top: 4px;">Connecting to ARCVN API endpoint...</p>
       </div>
 
       <div class="status-msg" id="statusMsg"></div>
