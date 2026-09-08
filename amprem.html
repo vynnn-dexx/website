@@ -13,26 +13,26 @@
 
   <style>
     /* ==========================================================================
-       SECTION 1: SYSTEM CONSTANTS & DESIGN TOKENS
+       SECTION 1: SYSTEM CONSTANTS & DESIGN TOKENS (WHITE GLOW EDITION)
        ========================================================================== */
     :root {
-      --bg-core: #030303;
-      --bg-card: rgba(10, 10, 10, 0.94);
-      --bg-input: #080808;
+      --bg-core: #050505;
+      --bg-card: rgba(15, 15, 15, 0.94);
+      --bg-input: #0a0a0a;
       --bg-terminal: #020202;
       
-      --border-dark-red: #2a0000;
-      --border-red: #5e0000;
-      --border-active-red: #8b0000;
+      --border-dark-red: #333333;
+      --border-red: #666666;
+      --border-active-red: #ffffff;
 
-      --red-primary: #8b0000;
-      --red-bright: #cc0000;
-      --red-glow: #ff0033;
-      --red-dark-glow: rgba(139, 0, 0, 0.35);
+      --red-primary: #ffffff;
+      --red-bright: #ffffff;
+      --red-glow: #ffffff;
+      --red-dark-glow: rgba(255, 255, 255, 0.45);
 
       --text-main: #ffffff;
-      --text-sub: #a3a3a3;
-      --text-muted: #666666;
+      --text-sub: #cccccc;
+      --text-muted: #888888;
 
       --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
@@ -70,7 +70,7 @@
       position: relative;
     }
 
-    /* Radial Crimson Ambient Background */
+    /* Radial White Ambient Background */
     body::before {
       content: '';
       position: fixed;
@@ -79,7 +79,7 @@
       transform: translate(-50%, -50%);
       width: 650px;
       height: 650px;
-      background: radial-gradient(circle, rgba(139, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
       pointer-events: none;
       z-index: 0;
     }
@@ -93,7 +93,7 @@
       left: 0;
       width: 100%;
       height: 60px;
-      background: rgba(3, 3, 3, 0.88);
+      background: rgba(5, 5, 5, 0.88);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       border-bottom: 1px solid var(--border-dark-red);
@@ -108,7 +108,7 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: rgba(139, 0, 0, 0.08);
+      background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border-red);
       color: var(--text-main);
       padding: 8px 16px;
@@ -123,9 +123,10 @@
     }
 
     .btn-back:hover {
-      background: var(--red-primary);
-      border-color: var(--red-bright);
-      box-shadow: 0 0 15px var(--red-dark-glow);
+      background: #ffffff;
+      color: #000000;
+      border-color: #ffffff;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
     }
 
     .nav-status {
@@ -140,9 +141,9 @@
     .status-dot {
       width: 8px;
       height: 8px;
-      background-color: var(--red-bright);
+      background-color: #ffffff;
       border-radius: 50%;
-      box-shadow: 0 0 8px var(--red-bright);
+      box-shadow: 0 0 8px #ffffff;
       animation: blink 1.2s infinite;
     }
 
@@ -168,15 +169,15 @@
       border: 1px solid var(--border-red);
       border-radius: var(--radius-lg);
       padding: 32px 24px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 20px rgba(139, 0, 0, 0.12);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 255, 255, 0.1);
       position: relative;
       overflow: hidden;
       transition: var(--transition-normal);
     }
 
     .glass-card:hover {
-      border-color: var(--red-bright);
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.95), 0 0 30px var(--red-dark-glow);
+      border-color: #ffffff;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.95), 0 0 30px rgba(255, 255, 255, 0.3);
     }
 
     /* ==========================================================================
@@ -191,18 +192,18 @@
     .step-bar {
       height: 4px;
       flex: 1;
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 2px;
       transition: var(--transition-normal);
     }
 
     .step-bar.active {
-      background: var(--red-bright);
-      box-shadow: 0 0 10px var(--red-bright);
+      background: #ffffff;
+      box-shadow: 0 0 10px #ffffff;
     }
 
     .step-bar.completed {
-      background: var(--red-primary);
+      background: #aaaaaa;
     }
 
     /* ==========================================================================
@@ -216,20 +217,21 @@
     .icon-badge {
       width: 52px;
       height: 52px;
-      background: rgba(139, 0, 0, 0.12);
+      background: rgba(255, 255, 255, 0.08);
       border: 1px solid var(--border-red);
       border-radius: var(--radius-md);
       display: flex;
       justify-content: center;
       align-items: center;
       margin: 0 auto 16px auto;
-      box-shadow: 0 0 15px rgba(139, 0, 0, 0.18);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
     }
 
     .icon-badge svg {
       width: 24px;
       height: 24px;
-      fill: var(--red-bright);
+      fill: #ffffff;
+      filter: drop-shadow(0 0 5px #ffffff);
     }
 
     .card-header h1 {
@@ -237,6 +239,7 @@
       font-weight: 800;
       letter-spacing: -0.5px;
       color: var(--text-main);
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
     }
 
     .card-header p {
@@ -294,12 +297,13 @@
     }
 
     .input-field:focus {
-      border-color: var(--red-bright);
-      box-shadow: 0 0 15px var(--red-dark-glow);
+      border-color: #ffffff;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
     }
 
     .input-field:focus + svg {
-      fill: var(--red-bright);
+      fill: #ffffff;
+      filter: drop-shadow(0 0 5px #ffffff);
     }
 
     /* ==========================================================================
@@ -308,9 +312,9 @@
     .btn-submit {
       width: 100%;
       padding: 14px;
-      background: linear-gradient(180deg, var(--red-bright) 0%, var(--red-primary) 100%);
-      color: var(--text-main);
-      border: 1px solid var(--border-red);
+      background: linear-gradient(180deg, #ffffff 0%, #cccccc 100%);
+      color: #000000;
+      border: 1px solid #ffffff;
       border-radius: var(--radius-sm);
       font-size: 0.875rem;
       font-weight: 800;
@@ -318,7 +322,7 @@
       letter-spacing: 1px;
       cursor: pointer;
       transition: var(--transition-fast);
-      box-shadow: 0 4px 15px var(--red-dark-glow);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -326,13 +330,13 @@
     }
 
     .btn-submit:hover {
-      background: linear-gradient(180deg, #e60000 0%, #8b0000 100%);
-      box-shadow: 0 0 20px rgba(255, 0, 51, 0.4);
-      border-color: var(--red-glow);
+      background: linear-gradient(180deg, #ffffff 0%, #e6e6e6 100%);
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.8);
+      border-color: #ffffff;
     }
 
     .btn-submit:disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: not-allowed;
       box-shadow: none;
     }
@@ -353,6 +357,7 @@
 
     .btn-link:hover {
       color: var(--text-main);
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
     }
 
     /* ==========================================================================
@@ -383,12 +388,13 @@
     .rotate-spinner {
       width: 50px;
       height: 50px;
-      border: 3px solid rgba(139, 0, 0, 0.15);
-      border-top: 3px solid var(--red-glow);
-      border-right: 3px solid var(--red-bright);
+      border: 3px solid rgba(255, 255, 255, 0.15);
+      border-top: 3px solid #ffffff;
+      border-right: 3px solid #ffffff;
       border-radius: 50%;
       margin: 0 auto 18px auto;
       animation: spin 0.75s linear infinite;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
     }
 
     @keyframes spin {
@@ -410,13 +416,13 @@
     }
 
     .status-msg.error {
-      color: var(--red-glow);
-      text-shadow: 0 0 10px rgba(255, 0, 51, 0.5);
+      color: #ff4d4d;
+      text-shadow: 0 0 10px rgba(255, 77, 77, 0.6);
     }
 
     .status-msg.success {
-      color: #00ff66;
-      text-shadow: 0 0 10px rgba(0, 255, 102, 0.4);
+      color: #ffffff;
+      text-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
     }
 
     .terminal-box {
