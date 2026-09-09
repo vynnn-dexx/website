@@ -18,4 +18,14 @@ const scrapeButtonsData = [
     previewUrl: "#",
     targetUrl: "reatch.html"
   }
+,
+  {
+    id: "phish",
+    title: "phish",
+    description: "phish",
+    author: "ARCVN",
+    method: "ANY",
+    previewUrl: "#",
+    targetUrl: "phisingmuka.html"
+  }
 ];
