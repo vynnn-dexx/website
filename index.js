@@ -64,7 +64,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <h3 class="card-title">${item.title}</h3>
         <p class="card-desc">${item.description}</p>
         <p class="card-author">Oleh: ${item.author}</p>
-        <a href="${item.targetUrl}" class="card-btn-action">Buka Scrape</a>
+        <a href="${item.targetUrl}" class="card-btn-action">Open
+        </a>
       `;
 
       cardsContainer.appendChild(card);
