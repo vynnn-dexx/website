@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AL-QUR'AN ONLINE - ARCVN Code Library</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       DESIGN TOKENS (WHITE GLOW DARK EDITION)
+       ========================================================================== */
+    :root {
+      --bg-core: #050505;
+      --bg-card: rgba(15, 15, 15, 0.94);
+      --bg-input: #0a0a0a;
+      --bg-terminal: #020202;
+      
+      --border-dark: #262626;
+      --border-light: #555555;
+      --border-active: #ffffff;
+
+      --text-main: #ffffff;
+      --text-sub: #cccccc;
+      --text-muted: #777777;
+
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-arabic: 'Amiri', serif;
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+
+      --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--bg-core);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+      position: relative;
+    }
+
+    /* Radial Ambient Background Glow */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 650px;
+      height: 650px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Top Navigation */
+    .top-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background: rgba(5, 5, 5, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-dark);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 24px;
+      z-index: 500;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-light);
+      color: var(--text-main);
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      text-transform: uppercase;
+    }
+
+    .btn-back:hover {
+      background: #ffffff;
+      color: #000000;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+    }
+
+    .nav-status {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #ffffff;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #ffffff;
+      animation: blink 1.2s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Main Container Card */
+    .main-container {
+      width: 100%;
+      max-width: 520px;
+      margin-top: 75px;
+      margin-bottom: 30px;
+      z-index: 10;
+    }
+
+    .glass-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 28px 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 255, 255, 0.1);
+    }
+
+    .card-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .icon-badge {
+      width: 52px;
+      height: 52px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto 14px auto;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+    }
+
+    .icon-badge svg {
+      width: 26px;
+      height: 26px;
+      fill: #ffffff;
+    }
+
+    .card-header h1 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text-main);
+    }
+
+    .card-header p {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      margin-top: 4px;
+    }
+
+    /* Input & Search */
+    .search-box {
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    .search-box svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      fill: var(--text-muted);
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 12px 14px 12px 42px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      font-size: 0.875rem;
+      outline: none;
+      transition: var(--transition-fast);
+    }
+
+    .input-field:focus {
+      border-color: #ffffff;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+    }
+
+    /* Surah List Grid */
+    .surah-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 440px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .surah-list::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .surah-list::-webkit-scrollbar-thumb {
+      background: #333333;
+      border-radius: 4px;
+    }
+
+    .surah-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition-fast);
+      text-decoration: none;
+    }
+
+    .surah-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: #ffffff;
+      transform: translateX(2px);
+    }
+
+    .surah-info-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .surah-num {
+      width: 32px;
+      height: 32px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-sub);
+    }
+
+    .surah-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .surah-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .surah-arabic {
+      font-family: var(--font-arabic);
+      font-size: 1.25rem;
+      color: #ffffff;
+      direction: rtl;
+    }
+
+    /* Detail View Styles */
+    .step-page {
+      display: none;
+    }
+
+    .step-page.active {
+      display: block;
+    }
+
+    .ayah-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .ayah-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .ayah-arabic {
+      font-family: var(--font-arabic);
+      font-size: 1.6rem;
+      color: #ffffff;
+      text-align: right;
+      line-height: 2.2;
+      margin-bottom: 12px;
+    }
+
+    .ayah-latin {
+      font-size: 0.8rem;
+      color: #cccccc;
+      font-style: italic;
+      margin-bottom: 6px;
+    }
+
+    .ayah-translate {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(180deg, #ffffff 0%, #cccccc 100%);
+      color: #000000;
+      border: 1px solid #ffffff;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+      margin-bottom: 14px;
+    }
+
+    .btn-submit:hover {
+      background: #ffffff;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
+    }
+
+    .loading-wrapper {
+      text-align: center;
+      padding: 30px 0;
+    }
+
+    .rotate-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255, 255, 255, 0.15);
+      border-top: 3px solid #ffffff;
+      border-radius: 50%;
+      margin: 0 auto 14px auto;
+      animation: spin 0.75s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .footer-info {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <nav class="top-nav">
+    <button class="btn-back" onclick="goBack()">← Kembali</button>
+    <div class="nav-status">
+      <div class="status-dot"></div>
+      <span>QURAN ENGINE ONLINE</span>
+    </div>
+  </nav>
+
+  <main class="main-container">
+    <div class="glass-card">
+
+      <!-- View 1: List Surah -->
+      <div id="viewList" class="step-page active">
+        <div class="card-header">
+          <div class="icon-badge">
+            <svg viewBox="0 0 24 24"><path d="M12 2l-2.5 4.5L4.5 9l4.5 2.5L12 22l2.5-10.5L19 9l-4.5-2.5z"/></svg>
+          </div>
+          <h1>Al-Qur'an Digital</h1>
+          <p>Daftar 114 Surah Al-Qur'an lengkap dengan terjemahan.</p>
+        </div>
+
+        <div class="search-box">
+          <input type="text" id="searchInput" class="input-field" placeholder="Cari surah (misal: Yasin, Al-Fatihah)..." oninput="filterSurah()">
+          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        </div>
+
+        <div class="surah-list" id="surahContainer">
+          <div class="loading-wrapper">
+            <div class="rotate-spinner"></div>
+            <p style="font-size: 0.8rem; color: var(--text-sub);">Memuat daftar surah...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- View 2: Loading State -->
+      <div id="viewLoading" class="step-page">
+        <div class="loading-wrapper">
+          <div class="rotate-spinner"></div>
+          <h1 id="loadingTitle" style="font-size: 1.1rem; font-weight: 800;">Memuat Surah...</h1>
+          <p style="font-size: 0.775rem; color: var(--text-sub); margin-top: 6px;">Mengambil ayat Al-Qur'an...</p>
+        </div>
+      </div>
+
+      <!-- View 3: Detail Surah & Ayat -->
+      <div id="viewDetail" class="step-page">
+        <button class="btn-submit" onclick="showView('viewList')">← Kembali ke Daftar Surah</button>
+        
+        <div class="card-header" style="margin-bottom: 16px;">
+          <h1 id="detailTitle">Surah Name</h1>
+          <p id="detailSub">Translate · 0 Ayat</p>
+        </div>
+
+        <div id="ayatsContainer"></div>
+      </div>
+
+      <div class="footer-info">
+        POWERED BY ARCVN | ADMIN: ARCVN2.T.ME
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    let surahData = [];
+
+    function goBack() {
+      if (document.referrer) {
+        window.history.back();
+      } else {
+        window.location.href = 'index.html';
+      }
+    }
+
+    function showView(viewId) {
+      document.querySelectorAll('.step-page').forEach(page => page.classList.remove('active'));
+      document.getElementById(viewId).classList.add('active');
+    }
+
+    // Load All Surahs
+    async function fetchSurahs() {
+      try {
+        const res = await fetch('https://equran.id/api/v2/surat');
+        const json = await res.json();
+        
+        if (json.code === 200) {
+          surahData = json.data;
+          renderSurahList(surahData);
+        } else {
+          throw new Error("Gagal mengambil data");
+        }
+      } catch (err) {
+        document.getElementById('surahContainer').innerHTML = 
+          `<p style="text-align:center; color:#ff4d4d; font-size:0.8rem;">Gagal memuat data: ${err.message}</p>`;
+      }
+    }
+
+    // Render Surah Grid
+    function renderSurahList(list) {
+      const container = document.getElementById('surahContainer');
+      container.innerHTML = '';
+
+      if (list.length === 0) {
+        container.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:0.8rem; padding: 20px;">Surah tidak ditemukan</p>`;
+        return;
+      }
+
+      list.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'surah-item';
+        el.onclick = () => openSurahDetail(item.nomor, item.namaLatin);
+        
+        el.innerHTML = `
+          <div class="surah-info-left">
+            <div class="surah-num">${item.nomor}</div>
+            <div>
+              <div class="surah-title">${item.namaLatin}</div>
+              <div class="surah-sub">${item.arti} · ${item.jumlahAyat} Ayat</div>
+            </div>
+          </div>
+          <div class="surah-arabic">${item.nama}</div>
+        `;
+        container.appendChild(el);
+      });
+    }
+
+    // Filter Search Input
+    function filterSurah() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const filtered = surahData.filter(s => 
+        s.namaLatin.toLowerCase().includes(query) || 
+        s.arti.toLowerCase().includes(query) ||
+        s.nomor.toString() === query
+      );
+      renderSurahList(filtered);
+    }
+
+    // Load & Render Detail Ayats
+    async function openSurahDetail(nomor, namaLatin) {
+      document.getElementById('loadingTitle').innerText = `Memuat ${namaLatin}...`;
+      showView('viewLoading');
+
+      try {
+        const res = await fetch(`https://equran.id/api/v2/surat/${nomor}`);
+        const json = await res.json();
+
+        if (json.code === 200) {
+          const detail = json.data;
+          
+          document.getElementById('detailTitle').innerText = `${detail.nomor}. ${detail.namaLatin} (${detail.nama})`;
+          document.getElementById('detailSub').innerText = `${detail.arti} · ${detail.jumlahAyat} Ayat · ${detail.tempatTurun}`;
+
+          const ayatsContainer = document.getElementById('ayatsContainer');
+          ayatsContainer.innerHTML = '';
+
+          detail.ayat.forEach(ayat => {
+            const card = document.createElement('div');
+            card.className = 'ayah-card';
+            card.innerHTML = `
+              <div class="ayah-header">
+                <span>AYAT ${ayat.nomorAyat}</span>
+              </div>
+              <div class="ayah-arabic">${ayat.teksArab}</div>
+              <div class="ayah-latin">${ayat.teksLatin}</div>
+              <div class="ayah-translate">${ayat.teksIndonesia}</div>
+            `;
+            ayatsContainer.appendChild(card);
+          });
+
+          showView('viewDetail');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      } catch (err) {
+        alert("Gagal memuat ayat: " + err.message);
+        showView('viewList');
+      }
+    }
+
+    // Initialize on page load
+    window.onload = fetchSurahs;
+  </script>
+</body>
+</html>
