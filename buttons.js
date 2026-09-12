@@ -18,4 +18,14 @@ const scrapeButtonsData = [
     previewUrl: "#",
     targetUrl: "reatch.html"
   }
+,
+  {
+    id: "quran",
+    title: "Al quran",
+    description: "untuk membaca al quran , dengan surat yang lengkap dan di translate ke bahasa indoensia",
+    author: "ARCVN",
+    method: "ANY",
+    previewUrl: "#",
+    targetUrl: "quran.html"
+  }
 ];
