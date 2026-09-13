@@ -33,4 +33,16 @@ const scrapeButtonsData = [
     previewUrl: "#",
     targetUrl: "quran.html"
   }
+,
+  {
+    id: "e-book",
+    title: "buku ski digital",
+    description: "untuk pembelajaran kelas IX ( 9 ) smp / Mts",
+    author: "ARCVN",
+    method: "GET",
+    category: "book-reader",
+    imageUrl: "https://files.catbox.moe/diu9bo.png",
+    previewUrl: "#",
+    targetUrl: "ebook.html"
+  }
 ];
