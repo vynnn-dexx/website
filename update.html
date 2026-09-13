@@ -231,6 +231,14 @@
       <p class="hero-subtitle">gw bakal update dawg kalo mood .</p>
     </section>
 
+    <!-- Card straming snime -->
+    <div class="update-card" onclick="openModal('modal-anime')">
+      <span class="badge">ANIME-STRAM - NEW</span>
+      <h3 class="card-title">straming snime</h3>
+      <p class="card-desc">untuk menonton anime secara realtime</p>
+      <span class="card-hint">Klik untuk lihat rincian detail →</span>
+    </div>
+
     <!-- Card 1 -->
     <div class="update-card" onclick="openModal('modal-v2')">
       <span class="badge">V 1.0.0 - RELEASED</span>
@@ -278,5 +286,25 @@
     }
   </script>
 
+
+  <!-- Modal Popup straming snime -->
+  <div class="modal-overlay" id="modal-anime" onclick="closeModalOnOverlay(event, 'modal-anime')">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <span class="badge">ANIME-STRAM</span>
+          <h2 style="font-size: 1.3rem; color: #fff; margin-top: 4px;">Detail straming snime</h2>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-anime')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Deskripsi:</strong> untuk menonton anime secara realtime</p>
+        <p><strong>Fitur Yang Ditambahkan:</strong></p>
+        <ul>
+          <li>animek.html</li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
