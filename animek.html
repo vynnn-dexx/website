@@ -204,7 +204,7 @@
 
     <div class="section-title" id="gridTitle">Popular Anime</div>
     <div class="grid" id="animeGrid">
-      <div class="status-msg" id="statusMsg"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data API...</div>
+      <div class="status-msg" id="statusMsg"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data...</div>
     </div>
 
   </div>
@@ -224,59 +224,42 @@
 
     window.addEventListener('DOMContentLoaded', fetchHomeData);
 
-    // Buka akses dari Acode via CORS proxy kalau dipanggil langsung
     async function apiFetch(endpoint) {
-      const targetUrl = `${API_URL}${endpoint}`;
-      try {
-        const res = await fetch(targetUrl);
-        if (!res.ok) throw new Error('CORS or Network Error');
-        return await res.json();
-      } catch (err) {
-        // Fallback CORS Proxy otomatis biar dari Acode tetep bisa narik data
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
-        const res = await fetch(proxyUrl);
-        return await res.json();
-      }
+      const res = await fetch(`${API_URL}${endpoint}`);
+      if (!res.ok) throw new Error('API Request Failed');
+      return await res.json();
     }
 
     async function fetchHomeData() {
       showStatus('<i class="fa-solid fa-spinner fa-spin"></i> Memuat data...');
       try {
         const data = await apiFetch('/api/parse');
-        const list = (data && data.slides) ? data.slides : ((data && data.trend) ? data.trend : []);
-
-        if (list && list.length > 0) {
+        const list = data.slides || data.trend || [];
+        if (list.length > 0) {
           renderGrid(list);
         } else {
-          // Kalo parse kosong, fallback nyari anime populer
-          searchAnimeByQuery('one piece');
+          executeSearch('naruto');
         }
       } catch (err) {
         console.error(err);
-        searchAnimeByQuery('one piece');
+        executeSearch('naruto');
       }
     }
 
-    async function searchAnime() {
+    function searchAnime() {
       const query = document.getElementById('searchInput').value.trim();
-      if (!query) return;
-      searchAnimeByQuery(query);
+      if (query) executeSearch(query);
     }
 
-    async function searchAnimeByQuery(query) {
-      gridTitle.innerText = `Hasil: "${query}"`;
+    async function executeSearch(query) {
+      gridTitle.innerText = `HASIL: "${query.toUpperCase()}"`;
       showStatus('<i class="fa-solid fa-spinner fa-spin"></i> Mencari...');
 
       try {
-        // Support 2 endpoint pencarian (path / query param)
-        let data;
-        try {
-          data = await apiFetch(`/api/search?keyword=${encodeURIComponent(query)}`);
-        } catch(e) {
-          data = await apiFetch(`/api/search/${encodeURIComponent(query)}/1`);
-        }
-
-        const list = data.searchYour || data.results || data.animes || (Array.isArray(data) ? data : []);
+        // Encode kata kunci dengan benar untuk endpoint /api/search/:query/1
+        const cleanQuery = encodeURIComponent(query);
+        const data = await apiFetch(`/api/search/${cleanQuery}/1`);
+        const list = data.searchYour || data.results || data.animes || [];
 
         if (list && list.length > 0) {
           renderGrid(list);
@@ -285,7 +268,7 @@
         }
       } catch (err) {
         console.error(err);
-        showStatus('Gagal memuat hasil pencarian.');
+        showStatus('Gagal memuat data dari server.');
       }
     }
 
@@ -294,7 +277,7 @@
       list.forEach(item => {
         const id = item.animeId || item.idanime || item.id || '';
         const title = item.name || item.title || 'Untitled';
-        const img = item.imageAnime || item.imgAni || item.img || item.poster || 'https://via.placeholder.com/300x400?text=No+Image';
+        const img = item.imageAnime || item.imgAni || item.img || item.poster || '';
 
         const card = document.createElement('div');
         card.className = 'card';
@@ -316,15 +299,12 @@
     }
 
     async function playStream(animeId, title) {
-      if (!animeId) {
-        alert('ID Anime tidak valid');
-        return;
-      }
+      if (!animeId) return;
 
-      showStatus('<i class="fa-solid fa-spinner fa-spin"></i> Memuat player...');
+      showStatus('<i class="fa-solid fa-spinner fa-spin"></i> Memuat video...');
       try {
         const streamData = await apiFetch(`/api/src1?id=${animeId}-episode-1`);
-
+        
         playerSection.style.display = 'block';
         animeTitle.innerText = title;
         animeEp.innerText = 'Episode 1';
@@ -357,9 +337,10 @@
         }
       } catch (err) {
         console.error(err);
-        alert('Gagal memuat video stream.');
+        alert('Gagal memuat stream video.');
       } finally {
-        grid.querySelector('.status-msg')?.remove();
+        const msg = grid.querySelector('.status-msg');
+        if (msg) msg.remove();
       }
     }
 
