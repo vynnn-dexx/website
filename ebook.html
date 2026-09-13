@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SKI Book - E-Book Reader</title>
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- PDF.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  
+  <!-- PageFlip Library (Animasi Balik Halaman 3D Ke Samping) -->
+  <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background-color: #0d0f12;
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Header Navbar */
+    header {
+      width: 100%;
+      padding: 14px 24px;
+      background: #14171d;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 4px 20px rgba(255, 255, 255, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Tombol Kembali ke Index */
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #ffffff;
+      border: 1px solid #ffffff;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.25s ease;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-back:hover {
+      background: #ffffff;
+      color: #0d0f12;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.4);
+      transform: translateY(-1px);
+    }
+
+    h1.title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+    }
+
+    /* Controls Bar */
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      background: #ffffff;
+      color: #0d0f12;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+    }
+
+    .page-indicator {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #ffffff;
+      padding: 4px 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    }
+
+    /* Viewer Container */
+    #viewer-container {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px 10px;
+      position: relative;
+    }
+
+    #flipbook {
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.12), 0 20px 40px rgba(0, 0, 0, 0.8);
+    }
+
+    .page-wrapper {
+      background-color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .page-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* Loading Box Neon */
+    .loading-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(20, 23, 29, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
+      padding: 24px 40px;
+      border-radius: 12px;
+      text-align: center;
+      z-index: 50;
+    }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(255, 255, 255, 0.2);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 12px auto;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-weight: 600;
+      color: #ffffff;
+      font-size: 0.95rem;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header>
+    <div class="brand-section">
+      <a href="index.html" class="btn-back">
+        <i class="fa-solid fa-arrow-left"></i> Home
+      </a>
+      <h1 class="title"><i class="fa-solid fa-book-open"></i> SKI Digital Book</h1>
+    </div>
+
+    <div class="controls">
+      <button class="nav-btn" id="prev-page-btn" title="Kembali Ke Samping">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+      <span class="page-indicator" id="page-counter">0 / 0</span>
+      <button class="nav-btn" id="next-page-btn" title="Maju Ke Samping">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Container Reader -->
+  <div id="viewer-container">
+    <div id="loading-box" class="loading-overlay">
+      <div class="spinner"></div>
+      <div class="loading-text" id="loading-status">Memuat E-Book SKI...</div>
+    </div>
+
+    <div id="flipbook"></div>
+  </div>
+
+  <script>
+    // URL file PDF di folder repo GitHub Pages kamu
+    // UBAH "buku.pdf" sesuai nama file PDF kamu di folder "ski book"
+    const PDF_URL = 'ski book/buku.pdf';
+
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    let pageFlipInstance = null;
+
+    async function loadPDFBook() {
+      const loadingBox = document.getElementById('loading-box');
+      const container = document.getElementById('flipbook');
+      const loadingStatus = document.getElementById('loading-status');
+
+      try {
+        // Fetch PDF langsung dari folder repository
+        const pdf = await pdfjsLib.getDocument(PDF_URL).promise;
+        const totalPages = pdf.numPages;
+
+        // Rendernya tiap halaman PDF ke gambar PNG
+        for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+          loadingStatus.innerText = `Menyiapkan Halaman ${pageNum} dari ${totalPages}...`;
+
+          const page = await pdf.getPage(pageNum);
+          const viewport = page.getViewport({ scale: 1.8 });
+          
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('2d');
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+
+          await page.render({ canvasContext: context, viewport: viewport }).promise;
+
+          // Konversi halaman ke PNG
+          const pngDataUrl = canvas.toDataURL('image/png');
+
+          const pageDiv = document.createElement('div');
+          pageDiv.className = 'page-wrapper';
+          
+          const img = document.createElement('img');
+          img.src = pngDataUrl;
+          img.alt = `Halaman ${pageNum}`;
+          
+          pageDiv.appendChild(img);
+          container.appendChild(pageDiv);
+        }
+
+        loadingStatus.innerText = 'Membuka Buku...';
+
+        // Inisialisasi Balik Halaman Ke Samping (Flipbook 3D)
+        pageFlipInstance = new St.PageFlip(container, {
+          width: 450,
+          height: 600,
+          size: "fixed",
+          minWidth: 300,
+          maxWidth: 900,
+          minHeight: 400,
+          maxHeight: 1200,
+          maxShadowOpacity: 0.5,
+          showCover: true,
+          mobileScrollSupport: false
+        });
+
+        pageFlipInstance.loadFromHTML(document.querySelectorAll('.page-wrapper'));
+
+        document.getElementById('page-counter').innerText = `1 / ${totalPages}`;
+
+        pageFlipInstance.on('flip', (e) => {
+          document.getElementById('page-counter').innerText = `${e.data + 1} / ${totalPages}`;
+        });
+
+        loadingBox.style.display = 'none';
+
+      } catch (error) {
+        loadingStatus.innerText = "Gagal memuat PDF! Pastikan file PDF ada di folder 'ski book/'.";
+        console.error(error);
+      }
+    }
+
+    // Jalankan fungsi load saat halaman web dibuka
+    window.addEventListener('DOMContentLoaded', loadPDFBook);
+
+    // Navigasi Tombol Next/Prev
+    document.getElementById('prev-page-btn').addEventListener('click', () => {
+      if (pageFlipInstance) pageFlipInstance.flipPrev();
+    });
+
+    document.getElementById('next-page-btn').addEventListener('click', () => {
+      if (pageFlipInstance) pageFlipInstance.flipNext();
+    });
+  </script>
+</body>
+</html>
