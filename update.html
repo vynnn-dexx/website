@@ -4,28 +4,279 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ARCVN - New Updates</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Reset & Base Style */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #050505;
+      color: #e5e5e5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(13, 13, 13, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #181818;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .brand-title {
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+      background: linear-gradient(45deg, #fff, #888);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-back {
+      color: #a1a1a1;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    .nav-back:hover {
+      color: #ffffff;
+    }
+
+    /* Layout Container */
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      width: 100%;
+    }
+
+    /* Hero Section */
+    .hero-section {
+      margin-bottom: 32px;
+    }
+
+    .hero-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .hero-subtitle {
+      font-size: 0.95rem;
+      color: #71717a;
+      line-height: 1.5;
+    }
+
+    /* Update Card */
+    .update-card {
+      background: #0d0d0d;
+      border: 1px solid #181818;
+      padding: 24px;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .update-card:hover {
+      border-color: #333333;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #f4f4f5;
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      font-size: 0.85rem;
+      color: #a1a1a1;
+      line-height: 1.5;
+    }
+
+    .card-hint {
+      margin-top: 14px;
+      font-size: 0.75rem;
+      color: #52525b;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Modal / Popup Detail */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+      z-index: 100;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: #121212;
+      border: 1px solid #27272a;
+      border-radius: 16px;
+      padding: 28px;
+      max-width: 500px;
+      width: 100%;
+      transform: scale(0.95);
+      transition: transform 0.2s ease;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: #71717a;
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+
+    .modal-close:hover {
+      color: #ffffff;
+    }
+
+    .modal-body p {
+      font-size: 0.9rem;
+      color: #d4d4d8;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .modal-body ul {
+      margin-left: 20px;
+      color: #a1a1a1;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    .modal-body li {
+      margin-bottom: 6px;
+    }
+  </style>
 </head>
 <body>
+
   <header class="navbar">
     <div class="brand">
       <span class="brand-title">ARCVN UPDATE</span>
     </div>
-    <a href="index.html" style="color:#fff; text-decoration:none; font-size:0.85rem; font-weight:600;">← Kembali</a>
+    <a href="index.html" class="nav-back">← Kembali</a>
   </header>
 
   <main class="container">
     <section class="hero-section">
       <h1 class="hero-title">Pembaruan Sistem</h1>
-      <p class="hero-subtitle">gw bakal update dawg kalo mood
-        .</p>
+      <p class="hero-subtitle">gw bakal update dawg kalo mood .</p>
     </section>
 
-    <div style="background:#0d0d0d; border:1px solid #181818; padding:20px; border-radius:12px; margin-bottom:12px;">
-      <span style="font-size:0.7rem; color:#888; font-weight:700;">V 2.0.0 - RELEASED</span>
-      <h3 style="font-size:1.1rem; margin:6px 0;">Pembaruan Branding & Kontak</h3>
-      <p style="font-size:0.8rem; color:#888; line-height:1.4;">Migrasi total nama developer ke ARCVN, penambahan menu navigasi cepat ke WhatsApp & Telegram, serta peningkatan kecepatan filter kartu.</p>
+    <!-- Card 1 -->
+    <div class="update-card" onclick="openModal('modal-v2')">
+      <span class="badge">V 2.0.0 - RELEASED</span>
+      <h3 class="card-title">Pembaruan Branding & Kontak</h3>
+      <p class="card-desc">Migrasi total nama developer ke ARCVN, penambahan menu navigasi cepat ke WhatsApp & Telegram, serta peningkatan kecepatan filter kartu.</p>
+      <span class="card-hint">Klik untuk lihat rincian detail →</span>
     </div>
   </main>
+
+  <!-- Modal Popup -->
+  <div class="modal-overlay" id="modal-v2" onclick="closeModalOnOverlay(event, 'modal-v2')">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <span class="badge">V 2.0.0 - RELEASED</span>
+          <h2 style="font-size: 1.3rem; color: #fff; margin-top: 4px;">Detail Pembaruan v2.0.0</h2>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-v2')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Berikut detail perubahan pada versi ini:</p>
+        <ul>
+          <li><strong>Rebranding:</strong> Perubahan nama developer menjadi ARCVN secara menyeluruh.</li>
+          <li><strong>Quick Navigation:</strong> Integrasi tombol akses cepat langsung ke WhatsApp & Telegram.</li>
+          <li><strong>Performance:</strong> Optimalisasi script filter kartu hingga 40% lebih cepat dari versi sebelumnya.</li>
+          <li><strong>UI/UX:</strong> Penyesuaian skema warna Dark Mode yang lebih nyaman di mata.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openModal(id) {
+      document.getElementById(id).classList.add('active');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    function closeModalOnOverlay(event, id) {
+      if (event.target === document.getElementById(id)) {
+        closeModal(id);
+      }
+    }
+  </script>
+
 </body>
 </html>
