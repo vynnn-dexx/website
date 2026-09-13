@@ -34,4 +34,16 @@ const scrapeButtonsData = [
     targetUrl: "quran.html"
   }
   
+,
+  {
+    id: "anime",
+    title: "straming snime",
+    description: "untuk menonton anime secara realtime",
+    author: "ARCVN",
+    method: "PUT",
+    category: "anime-stram",
+    imageUrl: "https://files.catbox.moe/diu9bo.png",
+    previewUrl: "#",
+    targetUrl: "animek.html"
+  }
 ];
