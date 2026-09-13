@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SKI Book - E-Book Reader</title>
+  <title>Digital E-Book Reader</title>
   
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -11,7 +11,7 @@
   <!-- PDF.js Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   
-  <!-- PageFlip Library (Animasi Balik Halaman 3D Ke Samping) -->
+  <!-- PageFlip Library (Animasi Balik Halaman 3D) -->
   <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.js"></script>
 
   <style>
@@ -119,17 +119,18 @@
 
     /* Viewer Container */
     #viewer-container {
-  flex: 1;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start; /* Mengubah perataan flex ke atas (top) */
-  padding: 10px 15px 30px 15px; /* Padding atas dikurangi jadi 10px */
-  position: relative;
-}
+      flex: 1;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 10px 15px 30px 15px;
+      position: relative;
+    }
 
     #flipbook {
       box-shadow: 0 0 25px rgba(255, 255, 255, 0.12), 0 20px 40px rgba(0, 0, 0, 0.8);
+      margin-top: -10px;
     }
 
     .page-wrapper {
@@ -138,6 +139,7 @@
       justify-content: center;
       align-items: center;
       overflow: hidden;
+      position: relative;
     }
 
     .page-wrapper img {
@@ -146,7 +148,31 @@
       object-fit: contain;
     }
 
-    /* Loading Box Neon */
+    /* Loader Tampilan Per Halaman */
+    .page-loader {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      height: 100%;
+      width: 100%;
+      color: #475569;
+      font-weight: 600;
+      font-size: 0.85rem;
+      background-color: #f8fafc;
+    }
+
+    .page-spinner {
+      width: 24px;
+      height: 24px;
+      border: 2px solid #cbd5e1;
+      border-top-color: #0f172a;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    /* Loading Overlay Awal */
     .loading-overlay {
       position: absolute;
       top: 50%;
@@ -192,15 +218,15 @@
       <a href="index.html" class="btn-back">
         <i class="fa-solid fa-arrow-left"></i> Home
       </a>
-      <h1 class="title"><i class="fa-solid fa-book-open"></i> SKI Digital Book</h1>
+      <h1 class="title"><i class="fa-solid fa-book-open"></i> E-Book Reader</h1>
     </div>
 
     <div class="controls">
-      <button class="nav-btn" id="prev-page-btn" title="Kembali Ke Samping">
+      <button class="nav-btn" id="prev-page-btn" title="Kembali">
         <i class="fa-solid fa-chevron-left"></i>
       </button>
       <span class="page-indicator" id="page-counter">0 / 0</span>
-      <button class="nav-btn" id="next-page-btn" title="Maju Ke Samping">
+      <button class="nav-btn" id="next-page-btn" title="Maju">
         <i class="fa-solid fa-chevron-right"></i>
       </button>
     </div>
@@ -210,20 +236,21 @@
   <div id="viewer-container">
     <div id="loading-box" class="loading-overlay">
       <div class="spinner"></div>
-      <div class="loading-text" id="loading-status">Memuat E-Book SKI...</div>
+      <div class="loading-text" id="loading-status">Menyiapkan E-Book...</div>
     </div>
 
     <div id="flipbook"></div>
   </div>
 
   <script>
-    // URL file PDF di folder repo GitHub Pages kamu
-    // UBAH "buku.pdf" sesuai nama file PDF kamu di folder "ski book"
-    const PDF_URL = 'buku.pdf';
+    // Langsung panggil book.pdf tanpa folder
+    const PDF_URL = 'book.pdf';
 
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
     let pageFlipInstance = null;
+    let pdfDoc = null;
+    const renderedPages = new Set();
 
     async function loadPDFBook() {
       const loadingBox = document.getElementById('loading-box');
@@ -231,41 +258,26 @@
       const loadingStatus = document.getElementById('loading-status');
 
       try {
-        // Fetch PDF langsung dari folder repository
-        const pdf = await pdfjsLib.getDocument(PDF_URL).promise;
-        const totalPages = pdf.numPages;
+        loadingStatus.innerText = 'Membaca file book.pdf...';
+        pdfDoc = await pdfjsLib.getDocument(PDF_URL).promise;
+        const totalPages = pdfDoc.numPages;
 
-        // Rendernya tiap halaman PDF ke gambar PNG
+        // 1. Buat kontainer div kosong (placeholder) per halaman
         for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
-          loadingStatus.innerText = `Menyiapkan Halaman ${pageNum} dari ${totalPages}...`;
-
-          const page = await pdf.getPage(pageNum);
-          const viewport = page.getViewport({ scale: 1.8 });
-          
-          const canvas = document.createElement('canvas');
-          const context = canvas.getContext('2d');
-          canvas.height = viewport.height;
-          canvas.width = viewport.width;
-
-          await page.render({ canvasContext: context, viewport: viewport }).promise;
-
-          // Konversi halaman ke PNG
-          const pngDataUrl = canvas.toDataURL('image/png');
-
           const pageDiv = document.createElement('div');
           pageDiv.className = 'page-wrapper';
+          pageDiv.dataset.pageNum = pageNum;
           
-          const img = document.createElement('img');
-          img.src = pngDataUrl;
-          img.alt = `Halaman ${pageNum}`;
-          
-          pageDiv.appendChild(img);
+          pageDiv.innerHTML = `
+            <div class="page-loader">
+              <div class="page-spinner"></div>
+              <span>Memuat Halaman ${pageNum}...</span>
+            </div>
+          `;
           container.appendChild(pageDiv);
         }
 
-        loadingStatus.innerText = 'Membuka Buku...';
-
-        // Inisialisasi Balik Halaman Ke Samping (Flipbook 3D)
+        // 2. Inisialisasi Flipbook secara cepat
         pageFlipInstance = new St.PageFlip(container, {
           width: 450,
           height: 600,
@@ -280,25 +292,68 @@
         });
 
         pageFlipInstance.loadFromHTML(document.querySelectorAll('.page-wrapper'));
-
         document.getElementById('page-counter').innerText = `1 / ${totalPages}`;
 
-        pageFlipInstance.on('flip', (e) => {
-          document.getElementById('page-counter').innerText = `${e.data + 1} / ${totalPages}`;
-        });
+        // 3. Langsung render Halaman 1 & 2 di awal
+        await renderSinglePage(1);
+        if (totalPages > 1) await renderSinglePage(2);
 
         loadingBox.style.display = 'none';
 
+        // 4. Render otomatis halaman aktif + halaman sekitarnya saat dibalik
+        pageFlipInstance.on('flip', (e) => {
+          const currentPage = e.data + 1;
+          document.getElementById('page-counter').innerText = `${currentPage} / ${totalPages}`;
+
+          const pagesToRender = [currentPage - 1, currentPage, currentPage + 1, currentPage + 2];
+          for (const p of pagesToRender) {
+            if (p >= 1 && p <= totalPages) {
+              renderSinglePage(p);
+            }
+          }
+        });
+
       } catch (error) {
-        loadingStatus.innerText = "Gagal memuat PDF! Pastikan file PDF ada di folder 'ski book/'.";
+        loadingStatus.innerText = "Gagal memuat PDF! Pastikan file 'book.pdf' ada di folder yang sama.";
         console.error(error);
       }
     }
 
-    // Jalankan fungsi load saat halaman web dibuka
+    // Render halaman PDF ke PNG secara individual
+    async function renderSinglePage(pageNum) {
+      if (renderedPages.has(pageNum)) return;
+      renderedPages.add(pageNum);
+
+      try {
+        const page = await pdfDoc.getPage(pageNum);
+        const viewport = page.getViewport({ scale: 1.3 });
+        
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        await page.render({ canvasContext: context, viewport: viewport }).promise;
+
+        const imgUrl = canvas.toDataURL('image/png');
+        const pageWrappers = document.querySelectorAll('.page-wrapper');
+        const targetWrapper = pageWrappers[pageNum - 1];
+
+        if (targetWrapper) {
+          targetWrapper.innerHTML = `<img src="${imgUrl}" alt="Halaman ${pageNum}">`;
+        }
+
+        // Clean-up canvas
+        canvas.width = 0;
+        canvas.height = 0;
+
+      } catch (err) {
+        console.error(`Gagal render halaman ${pageNum}:`, err);
+      }
+    }
+
     window.addEventListener('DOMContentLoaded', loadPDFBook);
 
-    // Navigasi Tombol Next/Prev
     document.getElementById('prev-page-btn').addEventListener('click', () => {
       if (pageFlipInstance) pageFlipInstance.flipPrev();
     });
