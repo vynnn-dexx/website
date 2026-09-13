@@ -10,23 +10,605 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
-  <!-- CSS Utama -->
-  <link rel="stylesheet" href="style.css">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* ==========================================
+       GLOBAL RESET & THEME CONFIG (SUPER DARK)
+       ========================================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #080808;
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* ==========================================
+       LOADING SCREEN (EYE ANIMATION)
+       ========================================== */
+    #loadingScreen {
+      position: fixed;
+      inset: 0;
+      background-color: #080808;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    .eye-loader {
+      font-size: 3.5rem;
+      color: #ffffff;
+      animation: pulseEye 1.2s infinite ease-in-out;
+    }
+
+    .loading-text {
+      margin-top: 16px;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      color: #888888;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    @keyframes pulseEye {
+      0% { transform: scale(0.9); opacity: 0.3; }
+      50% { transform: scale(1.15); opacity: 1; text-shadow: 0 0 20px rgba(255,255,255,0.7); }
+      100% { transform: scale(0.9); opacity: 0.3; }
+    }
+
+    /* ==========================================
+       NAVBAR
+       ========================================== */
+    .navbar {
+      height: 58px;
+      background-color: rgba(8, 8, 8, 0.85);
+      backdrop-filter: blur(12px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 18px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid #141414;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.4px;
+    }
+
+    .brand-icon {
+      font-size: 1.1rem;
+      color: #ffffff;
+    }
+
+    .menu-toggle {
+      background: #111;
+      border: 1px solid #222;
+      color: #ffffff;
+      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: background 0.2s;
+    }
+
+    .menu-toggle:hover {
+      background: #1a1a1a;
+    }
+
+    /* ==========================================
+       DRAWER / SIDEBAR POP-UP
+       ========================================== */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s ease;
+      z-index: 200;
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: -300px;
+      width: 280px;
+      height: 100%;
+      background: #0c0c0c;
+      z-index: 201;
+      transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.9);
+      border-left: 1px solid #1a1a1a;
+    }
+
+    .drawer.active {
+      right: 0;
+    }
+
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .drawer-header h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .close-btn {
+      background: transparent;
+      border: none;
+      color: #888;
+      font-size: 1.3rem;
+      cursor: pointer;
+    }
+
+    .drawer-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .drawer-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #a0a0a0;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 10px 12px;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .drawer-link i {
+      width: 18px;
+      text-align: center;
+    }
+
+    .drawer-link:hover, .drawer-link.active {
+      color: #ffffff;
+      background: #151515;
+    }
+
+    .drawer-divider {
+      height: 1px;
+      background: #181818;
+      margin: 12px 0;
+    }
+
+    .drawer-btn-update {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: #ffffff;
+      color: #000000;
+      text-decoration: none;
+      padding: 11px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-top: 8px;
+      transition: opacity 0.2s;
+    }
+
+    .drawer-btn-update:hover {
+      opacity: 0.9;
+    }
+
+    /* ==========================================
+       MAIN HERO SECTION
+       ========================================== */
+    .container {
+      max-width: 620px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 16px 30px 16px;
+      flex: 1;
+    }
+
+    .hero-section {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .hero-jpg-banner {
+      width: 100%;
+      max-height: 140px;
+      object-fit: cover;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      border: 1px solid #1f1f1f;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .hero-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+
+    .hero-subtitle {
+      font-size: 0.85rem;
+      color: #888888;
+      line-height: 1.5;
+      max-width: 460px;
+      margin: 0 auto;
+    }
+
+    /* ==========================================
+       SEARCH & BUTTON GESER (< DAN >)
+       ========================================== */
+    .search-filter-section {
+      margin-bottom: 24px;
+    }
+
+    .search-box {
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #666;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 12px 14px 12px 42px;
+      background: #0f0f0f;
+      border: 1px solid #1e1e1e;
+      border-radius: 10px;
+      color: #ffffff;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: #333333;
+    }
+
+    /* Slider Container Tombol Geser < dan > */
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      position: relative;
+    }
+
+    .nav-arrow {
+      background: #111111;
+      border: 1px solid #222222;
+      color: #ffffff;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .nav-arrow:hover {
+      background: #222;
+      border-color: #444;
+    }
+
+    .filter-tabs-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      scrollbar-width: none;
+      scroll-behavior: smooth;
+    }
+
+    .filter-tabs-wrapper::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-tabs {
+      display: inline-flex;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .tab-btn {
+      background: #0f0f0f;
+      border: 1px solid #1c1c1c;
+      color: #888888;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tab-btn.active {
+      background: #ffffff;
+      color: #000000;
+      border-color: #ffffff;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.15);
+    }
+
+    /* ==========================================
+       SCRAPE CARDS GRID (URUTAN SUPER KOMPLEKS)
+       ========================================== */
+    .cards-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .scrape-card {
+      background: #0d0d0d;
+      border: 1px solid #181818;
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border 0.2s;
+      overflow: hidden;
+    }
+
+    .scrape-card:hover {
+      border-color: #282828;
+    }
+
+    /* 1. KARTU TOP: METHOD & PREVIEW */
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .badge-group {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .badge-method {
+      background: #181818;
+      color: #a0a0a0;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .badge-category {
+      background: #141414;
+      border: 1px solid #222;
+      color: #777;
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .btn-preview {
+      color: #888;
+      font-size: 0.75rem;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-preview:hover {
+      color: #fff;
+    }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.2px;
+    }
+
+    /* 2. GAMBAR JPG DI ATAS PENJELASAN */
+    .card-jpg-cover {
+      width: 100%;
+      height: 130px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid #1c1c1c;
+    }
+
+    /* 3. PENJELASAN / DESKRIPSI (DI ATAS TOMBOL OPEN) */
+    .card-desc-box {
+      background: #111111;
+      border: 1px solid #1a1a1a;
+      padding: 10px 12px;
+      border-radius: 8px;
+    }
+
+    .card-desc {
+      font-size: 0.8rem;
+      color: #aaaaaa;
+      line-height: 1.45;
+    }
+
+    .card-author {
+      font-size: 0.725rem;
+      color: #666666;
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* 4. TOMBOL OPEN DI PALING BATAWAH PENJELASAN */
+    .card-btn-action {
+      width: 100%;
+      padding: 11px;
+      background: #ffffff;
+      color: #000000;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.825rem;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: opacity 0.2s;
+    }
+
+    .card-btn-action:hover {
+      opacity: 0.9;
+    }
+
+    /* ==========================================
+       FOOTER
+       ========================================== */
+    .footer {
+      background: #080808;
+      border-top: 1px solid #141414;
+      padding: 36px 20px 24px 20px;
+      margin-top: 40px;
+      max-width: 620px;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 12px;
+    }
+
+    .footer-desc {
+      font-size: 0.8rem;
+      color: #777;
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+
+    .footer-credit {
+      font-size: 0.75rem;
+      color: #555;
+      margin-bottom: 24px;
+    }
+
+    .footer-links-group {
+      margin-bottom: 20px;
+    }
+
+    .footer-links-group h4 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .footer-links-group a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #777;
+      text-decoration: none;
+      font-size: 0.8rem;
+      margin-bottom: 8px;
+      transition: color 0.2s;
+    }
+
+    .footer-links-group a:hover {
+      color: #fff;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid #141414;
+      padding-top: 20px;
+      margin-top: 24px;
+      font-size: 0.725rem;
+      color: #555;
+    }
+
+    .legal-links {
+      margin-top: 8px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .legal-links a {
+      color: #555;
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
+
+  <!-- LOADING OVERLAY ANIMATED EYE -->
+  <div id="loadingScreen">
+    <i class="fas fa-eye eye-loader"></i>
+    <span class="loading-text">Memuat ARCVN...</span>
+  </div>
 
   <!-- TOP HEADER / NAVBAR -->
   <header class="navbar">
     <div class="brand">
-      <svg class="brand-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
-      </svg>
+      <i class="fas fa-eye brand-icon"></i>
       <span class="brand-title">ARCVN</span>
     </div>
     <button class="menu-toggle" id="openDrawer" aria-label="Open Menu">
-      <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
-      </svg>
+      <i class="fas fa-bars"></i>
     </button>
   </header>
 
@@ -34,39 +616,30 @@
   <div class="drawer-overlay" id="drawerOverlay"></div>
   <aside class="drawer" id="drawerMenu">
     <div class="drawer-header">
-      <h2>Menu</h2>
+      <h2>Menu Navigasi</h2>
       <button class="close-btn" id="closeDrawer">&times;</button>
     </div>
     <nav class="drawer-nav">
       <a href="index.html" class="drawer-link active">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-        Home / Scrapes
+        <i class="fas fa-eye"></i> Home / Scrapes
       </a>
       <a href="#" class="drawer-link">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
-        Settings
+        <i class="fas fa-sliders-h"></i> Pengaturan
       </a>
       <a href="#" class="drawer-link">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z"/></svg>
-        Laporan / Request
+        <i class="fas fa-paper-plane"></i> Laporan / Request
       </a>
 
       <div class="drawer-divider"></div>
 
-      <!-- CONTACT & UPDATE MENU -->
+      <!-- HANYA TELEGRAM -->
       <a href="https://t.me/arcvn2" target="_blank" class="drawer-link">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M9.78 18.65l.28-4.2 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
-        Contact Telegram
-      </a>
-      <a href="https://wa.me/fck" target="_blank" class="drawer-link">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm5.84 14.09c-.25.7-.1.44-1.42 1.18-.87.49-2.02.82-3.32.32-3.13-1.21-5.18-4.39-5.34-4.6-.16-.21-1.28-1.7-1.28-3.24 0-1.54.8-2.3 1.09-2.61.29-.31.63-.39.84-.39.21 0 .42 0 .61.01.2.01.47-.08.73.55.27.65.91 2.23.99 2.39.08.16.13.35.03.56-.1.21-.16.34-.31.52-.16.18-.33.4-.47.54-.15.15-.31.31-.13.62.18.31.8 1.32 1.72 2.14 1.18 1.05 2.18 1.38 2.49 1.53.31.15.5.13.68-.08.18-.21.78-.91.99-1.22.21-.31.42-.26.71-.15.29.11 1.86.88 2.18 1.04.32.16.53.24.61.37.08.14.08.8-.17 1.5z"/></svg>
-        Contact WhatsApp
+        <i class="fab fa-telegram-plane"></i> Contact Telegram
       </a>
       
       <!-- PINDAH KE update.html -->
       <a href="update.html" class="drawer-btn-update">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-        New Update
+        <i class="fas fa-fire"></i> New Update
       </a>
     </nav>
   </aside>
@@ -74,42 +647,55 @@
   <!-- HERO CONTENT SECTION -->
   <main class="container">
     <section class="hero-section">
+      <!-- JPG GAMBAR DI ATAS PENJELASAN UTAMA -->
+      <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80" alt="Hero Banner" class="hero-jpg-banner">
+      
       <h1 class="hero-title">ARCVN Code Library</h1>
       <p class="hero-subtitle">
-        Platform penyimpanan, eksplorasi, dan berbagi struktur kode dan scrape secara elegan.
+        Platform penyimpanan, eksplorasi, dan berbagi struktur kode dan scrape secara fleksibel dan presisi.
       </p>
     </section>
 
-    <!-- SEARCH & FILTER TABS -->
+    <!-- SEARCH & FILTER SLIDER (BUTTON GESER < DAN >) -->
     <section class="search-filter-section">
       <div class="search-box">
-        <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-          <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-        </svg>
-        <input type="text" id="searchInput" placeholder="Cari scrape atau deskripsi..." autocomplete="off">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="searchInput" placeholder="Cari kode, deskripsi, atau kategori..." autocomplete="off">
       </div>
 
-      <!-- METHOD FILTER TABS -->
-      <div class="filter-tabs" id="filterTabs">
-        <button class="tab-btn active" data-method="ALL">ALL</button>
-        <button class="tab-btn" data-method="GET">GET</button>
-        <button class="tab-btn" data-method="POST">POST</button>
-        <button class="tab-btn" data-method="PUT">PUT</button>
-        <button class="tab-btn" data-method="PATCH">PATCH</button>
-        <button class="tab-btn" data-method="DELETE">DELETE</button>
+      <!-- SLIDER GESER DENGAN TOMBOL NAVIGASI KIRI/KANAN -->
+      <div class="slider-container">
+        <button class="nav-arrow" id="slideLeft" aria-label="Geser Kiri">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        
+        <div class="filter-tabs-wrapper" id="sliderWrapper">
+          <div class="filter-tabs" id="filterTabs">
+            <button class="tab-btn active" data-method="ALL"><i class="fas fa-border-all"></i> ALL</button>
+            <button class="tab-btn" data-method="GET"><i class="fas fa-download"></i> GET</button>
+            <button class="tab-btn" data-method="POST"><i class="fas fa-paper-plane"></i> POST</button>
+            <button class="tab-btn" data-method="PUT"><i class="fas fa-edit"></i> PUT</button>
+            <button class="tab-btn" data-method="PATCH"><i class="fas fa-wrench"></i> PATCH</button>
+            <button class="tab-btn" data-method="DELETE"><i class="fas fa-trash"></i> DELETE</button>
+          </div>
+        </div>
+
+        <button class="nav-arrow" id="slideRight" aria-label="Geser Kanan">
+          <i class="fas fa-chevron-right"></i>
+        </button>
       </div>
     </section>
 
     <!-- CARD LIST CONTAINER -->
     <section class="cards-grid" id="cardsContainer">
-      <!-- Kartu akan dimasukkan secara otomatis dari buttons.js -->
+      <!-- Render otomatis oleh JS dari buttons.js -->
     </section>
   </main>
 
   <!-- FOOTER -->
   <footer class="footer">
     <div class="footer-brand">
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+      <i class="fas fa-eye"></i>
       <span>ARCVN</span>
     </div>
     <p class="footer-desc">Platform modern dan aman untuk mengorganisir, menemukan, dan membagikan snippet kode serta scrape dari seluruh dunia.</p>
@@ -117,16 +703,15 @@
 
     <div class="footer-links-group">
       <h4>Navigasi</h4>
-      <a href="index.html">Home / Browse</a>
-      <a href="#">Submit Request</a>
-      <a href="#">Pengaturan Tampilan</a>
+      <a href="index.html"><i class="fas fa-angle-right"></i> Home / Browse</a>
+      <a href="#"><i class="fas fa-angle-right"></i> Submit Request</a>
+      <a href="#"><i class="fas fa-angle-right"></i> Pengaturan Tampilan</a>
     </div>
 
     <div class="footer-links-group">
       <h4>Kontak & Update</h4>
-      <a href="https://t.me/arcvn2" target="_blank">Contact Telegram</a>
-      <a href="https://wa.me/fck" target="_blank">Contact WhatsApp</a>
-      <a href="update.html">New Update</a>
+      <a href="https://t.me/arcvn2" target="_blank"><i class="fab fa-telegram-plane"></i> Contact Telegram</a>
+      <a href="update.html"><i class="fas fa-bell"></i> New Update</a>
     </div>
 
     <div class="footer-bottom">
@@ -138,8 +723,150 @@
     </div>
   </footer>
 
-  <!-- SCRIPT JAVASCRIPT & DATA -->
+  <!-- INTEGRASI DATABASE BUTTONS.JS EKSTERNAL -->
   <script src="buttons.js"></script>
-  <script src="index.js"></script>
+
+  <!-- LOGIC UTAMA JAVASCRIPT -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. HIDE LOADING SCREEN
+      const loadingScreen = document.getElementById('loadingScreen');
+      setTimeout(() => {
+        if (loadingScreen) {
+          loadingScreen.style.opacity = '0';
+          loadingScreen.style.visibility = 'hidden';
+        }
+      }, 600);
+
+      // 2. DRAWER MENU LOGIC
+      const drawerOverlay = document.getElementById('drawerOverlay');
+      const drawerMenu = document.getElementById('drawerMenu');
+      const openDrawerBtn = document.getElementById('openDrawer');
+      const closeDrawerBtn = document.getElementById('closeDrawer');
+
+      function openDrawer() {
+        drawerOverlay.classList.add('active');
+        drawerMenu.classList.add('active');
+      }
+
+      function closeDrawer() {
+        drawerOverlay.classList.remove('active');
+        drawerMenu.classList.remove('active');
+      }
+
+      if (openDrawerBtn) openDrawerBtn.addEventListener('click', openDrawer);
+      if (closeDrawerBtn) closeDrawerBtn.addEventListener('click', closeDrawer);
+      if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+
+      // 3. LOGIC TOMBOL GESER SLIDER (< dan >)
+      const sliderWrapper = document.getElementById('sliderWrapper');
+      const slideLeft = document.getElementById('slideLeft');
+      const slideRight = document.getElementById('slideRight');
+
+      if (slideLeft && slideRight && sliderWrapper) {
+        slideLeft.addEventListener('click', () => {
+          sliderWrapper.scrollBy({ left: -140, behavior: 'smooth' });
+        });
+        slideRight.addEventListener('click', () => {
+          sliderWrapper.scrollBy({ left: 140, behavior: 'smooth' });
+        });
+      }
+
+      // 4. RENDER CARDS LOGIC (Struktur Kompleks: Gambar JPG -> Penjelasan -> Tombol Open)
+      const cardsContainer = document.getElementById('cardsContainer');
+      const searchInput = document.getElementById('searchInput');
+      const tabButtons = document.querySelectorAll('.tab-btn');
+
+      let currentFilter = 'ALL';
+      let currentSearch = '';
+
+      function renderCards() {
+        if (!cardsContainer) return;
+        cardsContainer.innerHTML = '';
+
+        if (typeof scrapeButtonsData === 'undefined') {
+          cardsContainer.innerHTML = `<div style="text-align:center; color:#ff5555; padding: 20px;">File buttons.js tidak ditemukan!</div>`;
+          return;
+        }
+
+        const filteredData = scrapeButtonsData.filter(item => {
+          const matchesMethod = (currentFilter === 'ALL') || 
+                                (item.method === currentFilter) || 
+                                (item.method === 'ANY');
+
+          const matchesSearch = item.title.toLowerCase().includes(currentSearch.toLowerCase()) ||
+                                item.description.toLowerCase().includes(currentSearch.toLowerCase()) ||
+                                (item.category && item.category.toLowerCase().includes(currentSearch.toLowerCase()));
+
+          return matchesMethod && matchesSearch;
+        });
+
+        if (filteredData.length === 0) {
+          cardsContainer.innerHTML = `<div style="text-align:center; color:#555; padding: 30px; font-size:0.85rem;"><i class="fas fa-search"></i> Tidak ada scrape ditemukan.</div>`;
+          return;
+        }
+
+        filteredData.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'scrape-card';
+
+          // Urutan komponen diatur presisi sesuai permintaan:
+          // Top Badges -> Title -> Gambar JPG -> Box Penjelasan -> Tombol Open (di paling bawah)
+          card.innerHTML = `
+            <div class="card-top">
+              <div class="badge-group">
+                <span class="badge-method">${item.method}</span>
+                ${item.category ? `<span class="badge-category">${item.category}</span>` : ''}
+              </div>
+              <a href="${item.previewUrl}" class="btn-preview">
+                <i class="fas fa-external-link-alt"></i> Preview
+              </a>
+            </div>
+
+            <h3 class="card-title">${item.title}</h3>
+
+            <!-- GAMBAR JPG DI ATAS PENJELASAN -->
+            <img src="${item.imageUrl || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80'}" alt="${item.title}" class="card-jpg-cover" loading="lazy">
+
+            <!-- PENJELASAN (DI ATAS TOMBOL OPEN) -->
+            <div class="card-desc-box">
+              <p class="card-desc">${item.description}</p>
+              <div class="card-author">
+                <i class="far fa-user"></i> Oleh: <strong>${item.author}</strong>
+              </div>
+            </div>
+
+            <!-- TOMBOL OPEN DI PALING BATAWAH -->
+            <a href="${item.targetUrl}" class="card-btn-action">
+              <span>Open Code / Scrape</span> <i class="fas fa-arrow-right"></i>
+            </a>
+          `;
+
+          cardsContainer.appendChild(card);
+        });
+      }
+
+      // Filter Events
+      tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          tabButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentFilter = btn.getAttribute('data-method');
+          renderCards();
+        });
+      });
+
+      // Search Event
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          currentSearch = e.target.value.trim();
+          renderCards();
+        });
+      }
+
+      // Render pertama kali
+      renderCards();
+    });
+  </script>
 </body>
 </html>
