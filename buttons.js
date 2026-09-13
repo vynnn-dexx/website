@@ -7,7 +7,7 @@ const scrapeButtonsData = [
     author: "arcvn",
     method: "ANY",
     category: "Generator",
-    imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80",
+    imageUrl: "https://files.catbox.moe/diu9bo.png",
     previewUrl: "#",
     targetUrl: "amprem.html"
   },
