@@ -18,7 +18,7 @@ const scrapeButtonsData = [
     author: "ARCVN",
     method: "POST",
     category: "Bypass Tools",
-    imageUrl: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80",
+    imageUrl: "https://files.catbox.moe/diu9bo.png",
     previewUrl: "#",
     targetUrl: "reatch.html"
   },
@@ -29,7 +29,7 @@ const scrapeButtonsData = [
     author: "ARCVN",
     method: "ANY",
     category: "Religious & Utility",
-    imageUrl: "https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=600&q=80",
+    imageUrl: "https://files.catbox.moe/diu9bo.png",
     previewUrl: "#",
     targetUrl: "quran.html"
   }
