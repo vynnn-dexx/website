@@ -99,7 +99,7 @@
       box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
     }
 
-    /* Viewer Container dengan Background Dynamic Glowing Grid */
+    /* Viewer Container */
     #viewer-container {
       flex: 1;
       width: 100%;
@@ -151,52 +151,48 @@
       -webkit-user-drag: none;
     }
 
-    /* Overlay Tombol Geser (D-Pad Control) saat Zoom In */
+    /* Overlay Controller D-Pad Transparan (Naik Ke Atas & Cuma Tombol) */
     .pan-overlay {
       position: absolute;
-      bottom: 20px;
+      bottom: 90px; /* Dinaikkan agar tidak tertutup nav HP */
       right: 20px;
       display: grid;
-      grid-template-columns: repeat(3, 36px);
-      grid-template-rows: repeat(3, 36px);
-      gap: 4px;
-      background: rgba(15, 20, 28, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 6px;
-      border-radius: 12px;
-      backdrop-filter: blur(8px);
+      grid-template-columns: repeat(3, 40px);
+      grid-template-rows: repeat(3, 40px);
+      gap: 6px;
+      background: transparent; /* Full transparan */
+      padding: 0;
+      border: none;
       z-index: 90;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-    }
-
-    .pan-overlay.active {
-      opacity: 1;
+      opacity: 1; /* Selalu tampil dari awal */
       pointer-events: auto;
     }
 
     .pan-btn {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(13, 15, 18, 0.6); /* Transparan gelap subtle */
       color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 10px;
       cursor: pointer;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 0.8rem;
+      font-size: 0.9rem;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+      transition: all 0.2s ease;
     }
 
-    .pan-btn:hover {
+    .pan-btn:active, .pan-btn:hover {
       background: #ffffff;
       color: #0b0e14;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+      transform: scale(1.05);
     }
 
     .pan-up { grid-column: 2; grid-row: 1; }
     .pan-left { grid-column: 1; grid-row: 2; }
-    .pan-reset { grid-column: 2; grid-row: 2; font-size: 0.7rem; }
+    .pan-reset { grid-column: 2; grid-row: 2; font-size: 0.75rem; }
     .pan-right { grid-column: 3; grid-row: 2; }
     .pan-down { grid-column: 2; grid-row: 3; }
 
@@ -279,7 +275,7 @@
       <div id="flipbook"></div>
     </div>
 
-    <!-- D-Pad Direction Control saat Zooming -->
+    <!-- Controller Transparan (D-Pad) -->
     <div class="pan-overlay" id="pan-overlay">
       <button class="pan-btn pan-up" id="pan-up-btn"><i class="fa-solid fa-chevron-up"></i></button>
       <button class="pan-btn pan-left" id="pan-left-btn"><i class="fa-solid fa-chevron-left"></i></button>
@@ -306,15 +302,9 @@
 
     const zoomViewport = document.getElementById('zoom-viewport');
     const viewerContainer = document.getElementById('viewer-container');
-    const panOverlay = document.getElementById('pan-overlay');
 
     function updateTransform() {
       zoomViewport.style.transform = `translate(${pointX}px, ${pointY}px) scale(${currentScale})`;
-      if (currentScale > 1) {
-        panOverlay.classList.add('active');
-      } else {
-        panOverlay.classList.remove('active');
-      }
     }
 
     async function loadPDFBook() {
@@ -432,21 +422,19 @@
       updateTransform();
     });
 
-    // D-Pad Directional Controls (Kiri, Kanan, Atas, Bawah)
-    const PAN_STEP = 50;
+    // Navigasi D-Pad Geser (Kiri, Kanan, Atas, Bawah)
+    const PAN_STEP = 60;
     document.getElementById('pan-up-btn').addEventListener('click', () => { pointY += PAN_STEP; updateTransform(); });
     document.getElementById('pan-down-btn').addEventListener('click', () => { pointY -= PAN_STEP; updateTransform(); });
     document.getElementById('pan-left-btn').addEventListener('click', () => { pointX += PAN_STEP; updateTransform(); });
     document.getElementById('pan-right-btn').addEventListener('click', () => { pointX -= PAN_STEP; updateTransform(); });
     document.getElementById('pan-center-btn').addEventListener('click', () => { pointX = 0; pointY = 0; updateTransform(); });
 
-    // Touch & Mouse Dragging (Geser Layar Langsung pakai Jari/Mouse)
+    // Touch & Mouse Dragging
     const handleStart = (clientX, clientY) => {
-      if (currentScale > 1) {
-        isDragging = true;
-        startX = clientX - pointX;
-        startY = clientY - pointY;
-      }
+      isDragging = true;
+      startX = clientX - pointX;
+      startY = clientY - pointY;
     };
 
     const handleMove = (clientX, clientY) => {
@@ -460,12 +448,10 @@
       isDragging = false;
     };
 
-    // Mouse Events
     viewerContainer.addEventListener('mousedown', (e) => handleStart(e.clientX, e.clientY));
     window.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
     window.addEventListener('mouseup', handleEnd);
 
-    // Touch Events (Khusus HP / Layar Sentuh)
     viewerContainer.addEventListener('touchstart', (e) => {
       if (e.touches.length === 1) handleStart(e.touches[0].clientX, e.touches[0].clientY);
     });
