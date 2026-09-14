@@ -3,15 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>E-Book Reader</title>
+  <title>SKI Digital Book Reader</title>
   
-  <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- PDF.js Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  
-  <!-- PageFlip Library -->
   <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.js"></script>
 
   <style>
@@ -23,7 +18,7 @@
 
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background-color: #0d0f12;
+      background-color: #080a0c;
       color: #ffffff;
       min-height: 100vh;
       display: flex;
@@ -34,10 +29,10 @@
     /* Header Navbar */
     header {
       width: 100%;
-      padding: 12px 20px;
-      background: #14171d;
+      padding: 10px 16px;
+      background: rgba(20, 23, 29, 0.95);
       border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -47,14 +42,13 @@
     .brand-section {
       display: flex;
       align-items: center;
-      gap: 12px;
     }
 
     .btn-back {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 8px 14px;
+      gap: 6px;
+      padding: 6px 12px;
       background: rgba(255, 255, 255, 0.05);
       color: #ffffff;
       border: 1px solid #ffffff;
@@ -63,37 +57,36 @@
       font-size: 0.85rem;
       font-weight: 600;
       transition: all 0.25s ease;
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
     }
 
     .btn-back:hover {
       background: #ffffff;
       color: #0d0f12;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
     }
 
-    /* Group Control Buttons (Zoom & Prev/Next) */
     .controls {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
     .btn-divider {
       width: 1px;
-      height: 20px;
+      height: 18px;
       background: rgba(255, 255, 255, 0.2);
-      margin: 0 4px;
+      margin: 0 2px;
     }
 
     .nav-btn {
       background: rgba(255, 255, 255, 0.08);
       color: #ffffff;
       border: 1px solid rgba(255, 255, 255, 0.3);
-      padding: 8px 12px;
-      border-radius: 8px;
+      padding: 7px 10px;
+      border-radius: 7px;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       transition: all 0.2s ease;
       display: inline-flex;
       align-items: center;
@@ -103,10 +96,10 @@
     .nav-btn:hover {
       background: #ffffff;
       color: #0d0f12;
-      box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
     }
 
-    /* Viewer Area */
+    /* Viewer Container dengan Background Dynamic Glowing Grid */
     #viewer-container {
       flex: 1;
       width: 100%;
@@ -115,9 +108,14 @@
       align-items: center;
       position: relative;
       overflow: hidden;
+      background: 
+        radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 60%),
+        radial-gradient(circle at 20% 80%, rgba(147, 51, 234, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+        #0b0e14;
+      touch-action: none;
     }
 
-    /* Outer Wrapper untuk Fitur Zoom Smooth & Drag */
     #zoom-viewport {
       width: 100%;
       height: 100%;
@@ -125,7 +123,7 @@
       justify-content: center;
       align-items: center;
       transform-origin: center center;
-      transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+      transition: transform 0.15s ease-out;
       cursor: grab;
     }
 
@@ -134,8 +132,7 @@
     }
 
     #flipbook {
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 255, 255, 0.08);
-      margin-top: -15px; /* Menaikkan posisi buku */
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8), 0 0 25px rgba(255, 255, 255, 0.1);
     }
 
     .page-wrapper {
@@ -154,18 +151,62 @@
       -webkit-user-drag: none;
     }
 
-    /* Loader Per Halaman */
-    .page-loader {
+    /* Overlay Tombol Geser (D-Pad Control) saat Zoom In */
+    .pan-overlay {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      display: grid;
+      grid-template-columns: repeat(3, 36px);
+      grid-template-rows: repeat(3, 36px);
+      gap: 4px;
+      background: rgba(15, 20, 28, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 6px;
+      border-radius: 12px;
+      backdrop-filter: blur(8px);
+      z-index: 90;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .pan-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .pan-btn {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      cursor: pointer;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
-      gap: 10px;
+      font-size: 0.8rem;
+    }
+
+    .pan-btn:hover {
+      background: #ffffff;
+      color: #0b0e14;
+    }
+
+    .pan-up { grid-column: 2; grid-row: 1; }
+    .pan-left { grid-column: 1; grid-row: 2; }
+    .pan-reset { grid-column: 2; grid-row: 2; font-size: 0.7rem; }
+    .pan-right { grid-column: 3; grid-row: 2; }
+    .pan-down { grid-column: 2; grid-row: 3; }
+
+    /* Page & Main Loader */
+    .page-loader {
+      display: flex;
+      justify-content: center;
+      align-items: center;
       height: 100%;
       width: 100%;
-      color: #64748b;
-      font-weight: 600;
-      font-size: 0.85rem;
       background-color: #f8fafc;
     }
 
@@ -178,7 +219,6 @@
       animation: spin 0.8s linear infinite;
     }
 
-    /* Loading Main Overlay */
     .loading-overlay {
       position: absolute;
       top: 50%;
@@ -190,7 +230,7 @@
       padding: 20px 36px;
       border-radius: 12px;
       text-align: center;
-      z-index: 50;
+      z-index: 99;
     }
 
     .spinner {
@@ -210,7 +250,6 @@
 </head>
 <body>
 
-  <!-- Top Navigation Bar -->
   <header>
     <div class="brand-section">
       <a href="index.html" class="btn-back">
@@ -219,38 +258,34 @@
     </div>
 
     <div class="controls">
-      <!-- Tombol Zoom -->
-      <button class="nav-btn" id="zoom-in-btn" title="Zoom In">
-        <i class="fa-solid fa-magnifying-glass-plus"></i>
-      </button>
-      <button class="nav-btn" id="zoom-out-btn" title="Zoom Out">
-        <i class="fa-solid fa-magnifying-glass-minus"></i>
-      </button>
-      <button class="nav-btn" id="zoom-reset-btn" title="Reset Zoom">
-        <i class="fa-solid fa-rotate-right"></i>
-      </button>
+      <button class="nav-btn" id="zoom-in-btn" title="Zoom In"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+      <button class="nav-btn" id="zoom-out-btn" title="Zoom Out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+      <button class="nav-btn" id="zoom-reset-btn" title="Reset Zoom"><i class="fa-solid fa-rotate-right"></i></button>
 
       <div class="btn-divider"></div>
 
-      <!-- Tombol Balik Halaman -->
-      <button class="nav-btn" id="prev-page-btn" title="Sebelumnya">
-        <i class="fa-solid fa-chevron-left"></i>
-      </button>
-      <button class="nav-btn" id="next-page-btn" title="Selanjutnya">
-        <i class="fa-solid fa-chevron-right"></i>
-      </button>
+      <button class="nav-btn" id="prev-page-btn" title="Sebelumnya"><i class="fa-solid fa-chevron-left"></i></button>
+      <button class="nav-btn" id="next-page-btn" title="Selanjutnya"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
   </header>
 
-  <!-- Reader Canvas / Viewport -->
   <div id="viewer-container">
     <div id="loading-box" class="loading-overlay">
       <div class="spinner"></div>
-      <div class="loading-text" id="loading-status">Menyiapkan Buku...</div>
+      <div id="loading-status">Menyiapkan Buku...</div>
     </div>
 
     <div id="zoom-viewport">
       <div id="flipbook"></div>
+    </div>
+
+    <!-- D-Pad Direction Control saat Zooming -->
+    <div class="pan-overlay" id="pan-overlay">
+      <button class="pan-btn pan-up" id="pan-up-btn"><i class="fa-solid fa-chevron-up"></i></button>
+      <button class="pan-btn pan-left" id="pan-left-btn"><i class="fa-solid fa-chevron-left"></i></button>
+      <button class="pan-btn pan-reset" id="pan-center-btn"><i class="fa-solid fa-compress"></i></button>
+      <button class="pan-btn pan-right" id="pan-right-btn"><i class="fa-solid fa-chevron-right"></i></button>
+      <button class="pan-btn pan-down" id="pan-down-btn"><i class="fa-solid fa-chevron-down"></i></button>
     </div>
   </div>
 
@@ -262,21 +297,26 @@
     let pdfDoc = null;
     const renderedPages = new Set();
 
-    // Zoom & Pan Variables
     let currentScale = 1;
     let pointX = 0;
     let pointY = 0;
     let startX = 0;
     let startY = 0;
     let isDragging = false;
+
     const zoomViewport = document.getElementById('zoom-viewport');
     const viewerContainer = document.getElementById('viewer-container');
+    const panOverlay = document.getElementById('pan-overlay');
 
     function updateTransform() {
       zoomViewport.style.transform = `translate(${pointX}px, ${pointY}px) scale(${currentScale})`;
+      if (currentScale > 1) {
+        panOverlay.classList.add('active');
+      } else {
+        panOverlay.classList.remove('active');
+      }
     }
 
-    // Load PDF Document
     async function loadPDFBook() {
       const loadingBox = document.getElementById('loading-box');
       const container = document.getElementById('flipbook');
@@ -290,12 +330,7 @@
           const pageDiv = document.createElement('div');
           pageDiv.className = 'page-wrapper';
           pageDiv.dataset.pageNum = pageNum;
-          
-          pageDiv.innerHTML = `
-            <div class="page-loader">
-              <div class="page-spinner"></div>
-            </div>
-          `;
+          pageDiv.innerHTML = `<div class="page-loader"><div class="page-spinner"></div></div>`;
           container.appendChild(pageDiv);
         }
 
@@ -323,14 +358,12 @@
           const currentPage = e.data + 1;
           const pagesToRender = [currentPage - 1, currentPage, currentPage + 1, currentPage + 2];
           for (const p of pagesToRender) {
-            if (p >= 1 && p <= totalPages) {
-              renderSinglePage(p);
-            }
+            if (p >= 1 && p <= totalPages) renderSinglePage(p);
           }
         });
 
       } catch (error) {
-        loadingStatus.innerText = "Gagal memuat file 'book.pdf'.";
+        loadingStatus.innerText = "Gagal memuat 'book.pdf'.";
         console.error(error);
       }
     }
@@ -342,7 +375,6 @@
       try {
         const page = await pdfDoc.getPage(pageNum);
         const viewport = page.getViewport({ scale: 1.4 });
-        
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
         canvas.height = viewport.height;
@@ -365,7 +397,7 @@
       }
     }
 
-    // Controls: Navigasi
+    // Prev / Next Button
     document.getElementById('prev-page-btn').addEventListener('click', () => {
       if (pageFlipInstance) pageFlipInstance.flipPrev();
     });
@@ -374,18 +406,18 @@
       if (pageFlipInstance) pageFlipInstance.flipNext();
     });
 
-    // Controls: Zooming System
+    // Zoom Controls
     document.getElementById('zoom-in-btn').addEventListener('click', () => {
-      if (currentScale < 2.5) {
-        currentScale += 0.25;
+      if (currentScale < 3) {
+        currentScale += 0.3;
         updateTransform();
       }
     });
 
     document.getElementById('zoom-out-btn').addEventListener('click', () => {
-      if (currentScale > 0.75) {
-        currentScale -= 0.25;
-        if (currentScale === 1) {
+      if (currentScale > 0.8) {
+        currentScale -= 0.3;
+        if (currentScale <= 1) {
           pointX = 0;
           pointY = 0;
         }
@@ -400,26 +432,51 @@
       updateTransform();
     });
 
-    // Touch / Mouse Dragging saat Zoom
-    viewerContainer.addEventListener('mousedown', (e) => {
+    // D-Pad Directional Controls (Kiri, Kanan, Atas, Bawah)
+    const PAN_STEP = 50;
+    document.getElementById('pan-up-btn').addEventListener('click', () => { pointY += PAN_STEP; updateTransform(); });
+    document.getElementById('pan-down-btn').addEventListener('click', () => { pointY -= PAN_STEP; updateTransform(); });
+    document.getElementById('pan-left-btn').addEventListener('click', () => { pointX += PAN_STEP; updateTransform(); });
+    document.getElementById('pan-right-btn').addEventListener('click', () => { pointX -= PAN_STEP; updateTransform(); });
+    document.getElementById('pan-center-btn').addEventListener('click', () => { pointX = 0; pointY = 0; updateTransform(); });
+
+    // Touch & Mouse Dragging (Geser Layar Langsung pakai Jari/Mouse)
+    const handleStart = (clientX, clientY) => {
       if (currentScale > 1) {
         isDragging = true;
-        startX = e.clientX - pointX;
-        startY = e.clientY - pointY;
+        startX = clientX - pointX;
+        startY = clientY - pointY;
+      }
+    };
+
+    const handleMove = (clientX, clientY) => {
+      if (!isDragging) return;
+      pointX = clientX - startX;
+      pointY = clientY - startY;
+      updateTransform();
+    };
+
+    const handleEnd = () => {
+      isDragging = false;
+    };
+
+    // Mouse Events
+    viewerContainer.addEventListener('mousedown', (e) => handleStart(e.clientX, e.clientY));
+    window.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
+    window.addEventListener('mouseup', handleEnd);
+
+    // Touch Events (Khusus HP / Layar Sentuh)
+    viewerContainer.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) handleStart(e.touches[0].clientX, e.touches[0].clientY);
+    });
+
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 1 && isDragging) {
+        handleMove(e.touches[0].clientX, e.touches[0].clientY);
       }
     });
 
-    window.addEventListener('mousemove', (e) => {
-      if (!isDragging) return;
-      e.preventDefault();
-      pointX = e.clientX - startX;
-      pointY = e.clientY - startY;
-      updateTransform();
-    });
-
-    window.addEventListener('mouseup', () => {
-      isDragging = false;
-    });
+    window.addEventListener('touchend', handleEnd);
 
     window.addEventListener('DOMContentLoaded', loadPDFBook);
   </script>
