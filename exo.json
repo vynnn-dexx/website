@@ -1,16 +1,6 @@
 [
   {
     "id": 1,
-    "title": "TikTok Downloader",
-    "description": "Mendownload video, audio, dan foto carousel TikTok tanpa watermark.",
-    "language": "JAVASCRIPT",
-    "filename": "tiktokdl.js",
-    "created_at": "8 oktober 2026",
-    "author": "arcvn",
-    "code": "/* TikTok Downloader Module */\n'use strict';\n\nconst axios = require('axios');\nconst ENDPOINT = 'https://www.tiktok.com';\n\nasync function downloadTikTok(url) {\n  try {\n    const response = await axios.get(url);\n    return response.data;\n  } catch (error) {\n    console.error(error);\n  }\n}\n\nmodule.exports = { downloadTikTok };"
-  },
-  {
-    "id": 2,
     "title": "Download Video Capcut",
     "description": "untik Mendownload vidio template capcut hd",
     "language": "JAVASCRIPT",
