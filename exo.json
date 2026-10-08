@@ -8,5 +8,15 @@
     "created_at": "8 oktober 2026",
     "author": "arcvn",
     "code": "/* TikTok Downloader Module */\n'use strict';\n\nconst axios = require('axios');\nconst ENDPOINT = 'https://www.tiktok.com';\n\nasync function downloadTikTok(url) {\n  try {\n    const response = await axios.get(url);\n    return response.data;\n  } catch (error) {\n    console.error(error);\n  }\n}\n\nmodule.exports = { downloadTikTok };"
+  },
+  {
+    "id": 2,
+    "title": "Download Video Capcut",
+    "description": "untik Mendownload vidio template capcut hd",
+    "language": "JAVASCRIPT",
+    "filename": "capdl.js",
+    "created_at": "8 oktober 2026",
+    "author": "arcvn",
+    "code": "\nconst axios = require('axios');\nconst readlineSync = require('readline-sync');\n\nasync function 3bic(capcutUrl) {\n    const endpoint = 'https://3bic.com/api/download';\n\n    const headers = {\n        'Content-Type': 'application/json',\n        'Origin': 'https://3bic.com',\n        'Referer': 'https://3bic.com/',\n        'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36',\n        'Sec-Fetch-Dest': 'empty',\n        'Sec-Fetch-Mode': 'cors',\n        'Sec-Fetch-Site': 'same-origin'\n    };\n\n    const payload = {\n        url: capcutUrl\n    };\n\n    try {\n        const response = await axios.post(endpoint, payload, { headers, timeout: 10000 });\n        const resData = response.data;\n\n        if (resData && resData.code === 200) {\n            let downloadUrl = resData.originalVideoUrl || '';\n            if (downloadUrl.startsWith('/')) {\n                downloadUrl = `https://3bic.com${downloadUrl}`;\n            }\n\n            const output = {\n                status: true,\n                message: 'Berhasil mengambil data video CapCut',\n                data: {\n                    title: resData.title || '',\n                    author: resData.authorName || '',\n                    cover_url: resData.coverUrl || '',\n                    download_url: downloadUrl,\n                    raw_response: resData\n                }\n            };\n            \n            process.stdout.write(JSON.stringify(output, null, 2) + '\\n');\n        } else {\n            throw new Error(resData.message || 'Gagal memproses URL CapCut.');\n        }\n\n    } catch (err) {\n        const errorOutput = {\n            status: false,\n            message: 'Gagal melakukan scraping',\n            error: err.response?.data || err.message\n        };\n        process.stdout.write(JSON.stringify(errorOutput, null, 2) + '\\n');\n        process.exit(1);\n    }\n}\n\n(async () => {\n    let inputUrl = process.argv[2];\n\n    if (!inputUrl) {\n        inputUrl = readlineSync.question('Masukkan Link CapCut: ');\n    }\n\n    if (!inputUrl || !inputUrl.includes('capcut.com')) {\n        const errorOutput = {\n            status: false,\n            message: 'URL CapCut tidak valid.'\n        };\n        process.stdout.write(JSON.stringify(errorOutput, null, 2) + '\\n');\n        process.exit(1);\n    }\n\n    await 3bic(inputUrl.trim());\n})();\n"
   }
 ]
