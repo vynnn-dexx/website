@@ -5,28 +5,8 @@
     "description": "Mendownload video, audio, dan foto carousel TikTok tanpa watermark.",
     "language": "JAVASCRIPT",
     "filename": "tiktokdl.js",
-    "created_at": "12 Oktober 2024",
+    "created_at": "8 oktober 2026",
     "author": "arcvn",
     "code": "/* TikTok Downloader Module */\n'use strict';\n\nconst axios = require('axios');\nconst ENDPOINT = 'https://www.tiktok.com';\n\nasync function downloadTikTok(url) {\n  try {\n    const response = await axios.get(url);\n    return response.data;\n  } catch (error) {\n    console.error(error);\n  }\n}\n\nmodule.exports = { downloadTikTok };"
-  },
-  {
-    "id": 2,
-    "title": "Instagram Stalker",
-    "description": "Mengambil informasi profil, jumlah pengikut, postingan, dan bio Instagram.",
-    "language": "JAVASCRIPT",
-    "filename": "igstalk.js",
-    "created_at": "15 Oktober 2024",
-    "author": "arcvn",
-    "code": "/* Instagram Stalker */\nconst axios = require('axios');\n\nasync function igStalk(username) {\n  const res = await axios.get(`https://api.example.com/ig?user=${username}`);\n  return res.data;\n}\n\nmodule.exports = { igStalk };"
-  },
-  {
-    "id": 3,
-    "title": "YouTube MP3 Downloader",
-    "description": "Mengkonversi dan mendownload audio dari URL YouTube secara otomatis.",
-    "language": "JAVASCRIPT",
-    "filename": "ytmp3.js",
-    "created_at": "20 Oktober 2024",
-    "author": "arcvn",
-    "code": "/* YouTube Audio Extractor */\nconst ytdl = require('ytdl-core');\n\nfunction downloadMP3(url) {\n  return ytdl(url, { filter: 'audioonly' });\n}\n\nmodule.exports = { downloadMP3 };"
   }
 ]
