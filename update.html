@@ -231,6 +231,14 @@
       <p class="hero-subtitle">gw bakal update dawg kalo mood .</p>
     </section>
 
+    <!-- Card code Viewer -->
+    <div class="update-card" onclick="openModal('modal-all-code-web')">
+      <span class="badge">VIEWER - NEW</span>
+      <h3 class="card-title">code Viewer</h3>
+      <p class="card-desc">untuk melihat code website</p>
+      <span class="card-hint">Klik untuk lihat rincian detail →</span>
+    </div>
+
     <!-- Card buku ski digital -->
     <div class="update-card" onclick="openModal('modal-e-book')">
       <span class="badge">BOOK-READER - NEW</span>
@@ -330,6 +338,26 @@
         <p><strong>Fitur Yang Ditambahkan:</strong></p>
         <ul>
           <li>ebook.html</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Popup code Viewer -->
+  <div class="modal-overlay" id="modal-all-code-web" onclick="closeModalOnOverlay(event, 'modal-all-code-web')">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <span class="badge">VIEWER</span>
+          <h2 style="font-size: 1.3rem; color: #fff; margin-top: 4px;">Detail code Viewer</h2>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-all-code-web')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Deskripsi:</strong> untuk melihat code website</p>
+        <p><strong>Fitur Yang Ditambahkan:</strong></p>
+        <ul>
+          <li>codenya.html</li>
         </ul>
       </div>
     </div>
