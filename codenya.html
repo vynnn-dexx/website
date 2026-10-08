@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code Viewer Neo-Brutalism</title>
+  <!-- FontAwesome Icons & Google Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #fdfaf6;
+      --card-bg: #ffffff;
+      --text-color: #0d0d0d;
+      --border-color: #0d0d0d;
+      --accent-yellow: #ffe600;
+      --accent-green: #00e699;
+      --accent-blue: #3385ff;
+      --accent-red: #ff4d4d;
+      --terminal-bg: #18181b;
+      --terminal-text: #a1a1aa;
+      --shadow: 4px 4px 0px #0d0d0d;
+      --shadow-lg: 6px 6px 0px #0d0d0d;
+    }
+
+    [data-theme="dark"] {
+      --bg-color: #121212;
+      --card-bg: #1e1e1e;
+      --text-color: #f0f0f0;
+      --border-color: #000000;
+      --shadow: 4px 4px 0px #000000;
+      --shadow-lg: 6px 6px 0px #000000;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      padding-bottom: 90px;
+      overflow-x: hidden;
+    }
+
+    /* ---------------- INITIALIZING LOADING SCREEN ---------------- */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: var(--bg-color);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    .loading-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .logo-box {
+      background: var(--accent-blue);
+      color: #fff;
+      border: 4px solid var(--border-color);
+      border-radius: 18px;
+      padding: 12px 20px;
+      box-shadow: var(--shadow-lg);
+      font-size: 1.6rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .logo-box i {
+      font-size: 1.8rem;
+    }
+
+    .loading-bar-container {
+      width: 220px;
+      height: 16px;
+      background: var(--card-bg);
+      border: 3px solid var(--border-color);
+      border-radius: 20px;
+      padding: 2px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .loading-bar-fill {
+      width: 0%;
+      height: 100%;
+      background: var(--accent-yellow);
+      border-radius: 10px;
+      transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .loading-text {
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: var(--text-color);
+      opacity: 0.8;
+    }
+
+    /* ---------------- TOP SEARCH HEADER ---------------- */
+    .top-header {
+      position: sticky;
+      top: 0;
+      background: var(--bg-color);
+      padding: 12px 16px;
+      z-index: 100;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      border-bottom: 3px solid var(--border-color);
+    }
+
+    .search-box {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      background: var(--card-bg);
+      border: 3px solid var(--border-color);
+      border-radius: 12px;
+      padding: 8px 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .search-box i {
+      margin-right: 8px;
+      font-size: 1.1rem;
+    }
+
+    .search-box input {
+      border: none;
+      outline: none;
+      background: transparent;
+      width: 100%;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+
+    /* Smooth Rotating Theme Button */
+    .theme-toggle-btn {
+      width: 44px;
+      height: 44px;
+      background: var(--accent-yellow);
+      border: 3px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .theme-toggle-btn i {
+      transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.3s ease;
+    }
+
+    .theme-toggle-btn.rotate i {
+      transform: rotate(360deg) scale(1.2);
+    }
+
+    .theme-toggle-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px var(--border-color);
+    }
+
+    /* ---------------- MAIN CONTAINER ---------------- */
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 0 16px;
+    }
+
+    .card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .code-card {
+      background: var(--card-bg);
+      border: 3px solid var(--border-color);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .card-tags {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .badge-lang {
+      background: var(--accent-blue);
+      color: #fff;
+      border: 2px solid var(--border-color);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .card-desc {
+      font-size: 0.9rem;
+      opacity: 0.85;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
+    .terminal-preview {
+      background: var(--terminal-bg);
+      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8rem;
+      color: var(--terminal-text);
+      margin-bottom: 14px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .btn-preview {
+      width: 100%;
+      background: var(--accent-yellow);
+      border: 3px solid var(--border-color);
+      padding: 10px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-preview:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px var(--border-color);
+    }
+
+    /* ---------------- MODALS & POPUPS ---------------- */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      border: 4px solid var(--border-color);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 20px;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(20px);
+      transition: transform 0.25s ease;
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .btn-close {
+      background: var(--accent-red);
+      color: #fff;
+      border: 3px solid var(--border-color);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 2px 2px 0px var(--border-color);
+    }
+
+    .terminal-box {
+      background: var(--terminal-bg);
+      border: 3px solid var(--border-color);
+      border-radius: 12px;
+      margin: 14px 0;
+      overflow: hidden;
+    }
+
+    .terminal-header {
+      background: #27272a;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .terminal-title {
+      color: #fff;
+      font-size: 0.8rem;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .btn-copy-small {
+      background: var(--accent-yellow);
+      border: 2px solid var(--border-color);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .terminal-body {
+      padding: 12px;
+      color: #38bdf8;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      max-height: 250px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .btn-action {
+      padding: 12px;
+      border: 3px solid var(--border-color);
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      color: var(--text-color);
+      box-shadow: var(--shadow);
+    }
+
+    .btn-action.green { background: var(--accent-green); }
+    .btn-action.red { background: var(--accent-red); color: #fff; }
+
+    .social-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .social-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 3px solid var(--border-color);
+      border-radius: 12px;
+      text-decoration: none;
+      color: var(--text-color);
+      font-weight: 800;
+      box-shadow: var(--shadow);
+    }
+
+    .info-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 15px 0;
+    }
+
+    .info-item {
+      background: var(--bg-color);
+      border: 2px solid var(--border-color);
+      padding: 10px 14px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .feature-select-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 180px;
+      overflow-y: auto;
+      margin-bottom: 15px;
+    }
+
+    .feature-select-item {
+      padding: 10px;
+      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      background: var(--bg-color);
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .feature-select-item.active {
+      background: var(--accent-yellow);
+    }
+
+    /* ---------------- BOTTOM NAVBAR (NEO-BRUTALISM ACTIVE STATE) ---------------- */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: var(--card-bg);
+      border-top: 3px solid var(--border-color);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 0;
+      z-index: 100;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      text-decoration: none;
+      color: var(--text-color);
+      font-size: 0.75rem;
+      font-weight: 800;
+      cursor: pointer;
+      border: 3px solid transparent;
+      background: transparent;
+      padding: 6px 16px;
+      border-radius: 14px;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .nav-item i {
+      font-size: 1.2rem;
+    }
+
+    /* Animasi Kuning Saat Di-Select / Aktif */
+    .nav-item.active {
+      background: var(--accent-yellow);
+      border-color: var(--border-color);
+      box-shadow: 3px 3px 0px var(--border-color);
+      transform: translateY(-4px);
+    }
+
+    .nav-item.animating {
+      animation: buttonBounce 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes buttonBounce {
+      0% { transform: scale(1); }
+      50% { transform: scale(0.9) translateY(2px); }
+      100% { transform: scale(1) translateY(-4px); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loading Splash Screen -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="logo-box">
+      <i class="fa-solid fa-code"></i>
+      <span>ARCVN MD</span>
+    </div>
+    <div class="loading-bar-container">
+      <div class="loading-bar-fill" id="loadingBarFill"></div>
+    </div>
+    <div class="loading-text">INITIALIZING DASHBOARD</div>
+  </div>
+
+  <!-- Search Header -->
+  <header class="top-header">
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="searchInput" placeholder="Cari fitur...">
+    </div>
+    <button class="theme-toggle-btn" id="themeBtn" title="Ganti Tema">
+      <i class="fa-solid fa-moon"></i>
+    </button>
+  </header>
+
+  <!-- Container Cards -->
+  <main class="container">
+    <div class="card-list" id="featureList">
+      <!-- Cards generated via JS -->
+    </div>
+  </main>
+
+  <!-- Pop-up Code Modal -->
+  <div class="modal-overlay" id="codeModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <span class="badge-lang" id="modalLang">JAVASCRIPT</span>
+          <h2 class="card-title" id="modalTitle" style="margin-top: 6px;">Title</h2>
+        </div>
+        <button class="btn-close" onclick="closeModal('codeModal')">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <p class="card-desc" id="modalDesc">Description</p>
+      
+      <div class="terminal-box">
+        <div class="terminal-header">
+          <span class="terminal-title" id="modalFilename">script.js</span>
+          <button class="btn-copy-small" onclick="copyCode()">
+            <i class="fa-regular fa-copy"></i> Salin
+          </button>
+        </div>
+        <pre class="terminal-body"><code id="modalCode"></code></pre>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-action green" onclick="copyCode()">
+          <i class="fa-regular fa-copy"></i> Salin Kode
+        </button>
+        <button class="btn-action red" onclick="closeModal('codeModal')">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pop-up Owner Modal -->
+  <div class="modal-overlay" id="ownerModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="card-title">Social Media Owner</h2>
+        <button class="btn-close" onclick="closeModal('ownerModal')">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <p class="card-desc">Hubungi atau ikuti sosial media owner melalui tautan di bawah ini:</p>
+      
+      <div class="social-list">
+        <a href="https://t.me/arcvn2" target="_blank" class="social-link" style="background: #0088cc; color: #fff;">
+          <i class="fa-brands fa-telegram fa-lg"></i> Telegram Owner
+        </a>
+        <a href="https://github.com" target="_blank" class="social-link" style="background: #24292e; color: #fff;">
+          <i class="fa-brands fa-github fa-lg"></i> GitHub
+        </a>
+        <a href="https://instagram.com" target="_blank" class="social-link" style="background: #e1306c; color: #fff;">
+          <i class="fa-brands fa-instagram fa-lg"></i> Instagram
+        </a>
+      </div>
+
+      <div class="modal-actions" style="margin-top: 20px;">
+        <button class="btn-action red" onclick="closeModal('ownerModal')">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pop-up Info Fitur Modal -->
+  <div class="modal-overlay" id="infoModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="card-title">Informasi Fitur</h2>
+        <button class="btn-close" onclick="closeModal('infoModal')">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <p class="card-desc">Pilih fitur di bawah ini untuk melihat detail pembuatan:</p>
+
+      <div class="feature-select-list" id="infoFeatureList">
+        <!-- Generated via JS -->
+      </div>
+
+      <div class="info-meta">
+        <div class="info-item">
+          <span>Pencipta / Author:</span>
+          <span id="infoAuthor" style="color: #0088cc;">arcvn</span>
+        </div>
+        <div class="info-item">
+          <span>Ditambahkan Pada:</span>
+          <span id="infoCreatedAt">-</span>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-action red" onclick="closeModal('infoModal')">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Navbar -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" id="btnNavHome" onclick="handleNavClick(this, () => window.location.href='index.html')">
+      <i class="fa-solid fa-house"></i>
+      <span>Home</span>
+    </button>
+    <button class="nav-item" id="btnNavOwner" onclick="handleNavClick(this, openOwnerModal)">
+      <i class="fa-solid fa-user"></i>
+      <span>Owner</span>
+    </button>
+    <button class="nav-item" id="btnNavFitur" onclick="handleNavClick(this, openInfoModal)">
+      <i class="fa-solid fa-layer-group"></i>
+      <span>Fitur</span>
+    </button>
+  </nav>
+
+  <!-- Script Logic -->
+  <script>
+    let exoData = [];
+
+    // Simulate Initial Loading Screen
+    window.addEventListener('DOMContentLoaded', () => {
+      const fill = document.getElementById('loadingBarFill');
+      const screen = document.getElementById('loadingScreen');
+
+      setTimeout(() => { fill.style.width = '100%'; }, 100);
+
+      setTimeout(() => {
+        screen.classList.add('hidden');
+      }, 1400);
+
+      loadData();
+    });
+
+    // Fetch data dari exo.json
+    async function loadData() {
+      try {
+        const res = await fetch('exo.json');
+        exoData = await res.json();
+        renderCards(exoData);
+      } catch (err) {
+        console.error("Gagal memuat exo.json:", err);
+      }
+    }
+
+    // Render daftar kartu ke HTML
+    function renderCards(data) {
+      const container = document.getElementById('featureList');
+      container.innerHTML = '';
+
+      if (data.length === 0) {
+        container.innerHTML = `<p style="text-align: center; font-weight: 700;">Fitur tidak ditemukan.</p>`;
+        return;
+      }
+
+      data.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'code-card';
+        card.innerHTML = `
+          <div class="card-tags">
+            <span class="badge-lang">${item.language}</span>
+          </div>
+          <h3 class="card-title">${item.title}</h3>
+          <p class="card-desc">${item.description}</p>
+          <div class="terminal-preview">${escapeHtml(item.code.substring(0, 45))}...</div>
+          <button class="btn-preview" onclick="openCodeModal(${item.id})">
+            <i class="fa-solid fa-eye"></i> Preview Code
+          </button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Filter fitur berdasarkan pencarian
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      const keyword = e.target.value.toLowerCase();
+      const filtered = exoData.filter(item => 
+        item.title.toLowerCase().includes(keyword) || 
+        item.description.toLowerCase().includes(keyword)
+      );
+      renderCards(filtered);
+    });
+
+    // Handle Navbar Click Animation and Function Delayed Call
+    function handleNavClick(element, callback) {
+      // Unset active class from all nav items
+      document.querySelectorAll('.nav-item').forEach(el => {
+        el.classList.remove('active');
+        el.classList.remove('animating');
+      });
+
+      // Set active and play animation
+      element.classList.add('active');
+      element.classList.add('animating');
+
+      // Jalankan fungsi setelah animasi seleksi selesai (~300ms)
+      setTimeout(() => {
+        element.classList.remove('animating');
+        if (typeof callback === 'function') callback();
+      }, 300);
+    }
+
+    // Pop-up Modals Logic
+    function openCodeModal(id) {
+      const item = exoData.find(x => x.id === id);
+      if (!item) return;
+
+      document.getElementById('modalLang').innerText = item.language;
+      document.getElementById('modalTitle').innerText = item.title;
+      document.getElementById('modalDesc').innerText = item.description;
+      document.getElementById('modalFilename').innerText = item.filename;
+      document.getElementById('modalCode').innerText = item.code;
+
+      document.getElementById('codeModal').classList.add('active');
+    }
+
+    function openOwnerModal() {
+      document.getElementById('ownerModal').classList.add('active');
+    }
+
+    function openInfoModal() {
+      const listContainer = document.getElementById('infoFeatureList');
+      listContainer.innerHTML = '';
+
+      if (exoData.length > 0) {
+        exoData.forEach((item, index) => {
+          const div = document.createElement('div');
+          div.className = `feature-select-item ${index === 0 ? 'active' : ''}`;
+          div.innerHTML = `<span>${item.title}</span> <i class="fa-solid fa-chevron-right"></i>`;
+          div.onclick = () => selectFeatureInfo(index, div);
+          listContainer.appendChild(div);
+        });
+
+        selectFeatureInfo(0, listContainer.children[0]);
+      }
+
+      document.getElementById('infoModal').classList.add('active');
+    }
+
+    function selectFeatureInfo(index, element) {
+      const items = document.querySelectorAll('.feature-select-item');
+      items.forEach(el => el.classList.remove('active'));
+      if(element) element.classList.add('active');
+
+      const item = exoData[index];
+      if (item) {
+        document.getElementById('infoAuthor').innerText = item.author || 'arcvn';
+        document.getElementById('infoCreatedAt').innerText = item.created_at || 'Tidak diketahui';
+      }
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    function copyCode() {
+      const codeText = document.getElementById('modalCode').innerText;
+      navigator.clipboard.writeText(codeText).then(() => {
+        alert('Kode berhasil disalin!');
+      }).catch(() => {
+        alert('Gagal menyalin kode.');
+      });
+    }
+
+    // Smooth Theme Toggle Animation
+    const themeBtn = document.getElementById('themeBtn');
+    themeBtn.addEventListener('click', () => {
+      themeBtn.classList.add('rotate');
+
+      setTimeout(() => {
+        const currentTheme = document.body.getAttribute('data-theme');
+        if (currentTheme === 'dark') {
+          document.body.removeAttribute('data-theme');
+          themeBtn.innerHTML = `<i class="fa-solid fa-moon"></i>`;
+        } else {
+          document.body.setAttribute('data-theme', 'dark');
+          themeBtn.innerHTML = `<i class="fa-solid fa-sun"></i>`;
+        }
+      }, 250);
+
+      setTimeout(() => {
+        themeBtn.classList.remove('rotate');
+      }, 500);
+    });
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+  </script>
+</body>
+</html>
