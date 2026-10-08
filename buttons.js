@@ -45,4 +45,16 @@ const scrapeButtonsData = [
     previewUrl: "#",
     targetUrl: "ebook.html"
   }
+,
+  {
+    id: "all code web",
+    title: "code Viewer",
+    description: "untuk melihat code website",
+    author: "ARCVN",
+    method: "PATCH",
+    category: "Viewer",
+    imageUrl: "https://files.catbox.moe/diu9bo.png",
+    previewUrl: "#",
+    targetUrl: "codenya.html"
+  }
 ];
