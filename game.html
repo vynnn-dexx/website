@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcade Game Selection Cabinet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cabinet-dark: #121016;
+            --cabinet-metal: #2a2533;
+            --screen-bezel: #08070a;
+            --btn-red: #cc2222;
+            --btn-blue: #1166cc;
+            --btn-green: #22aa44;
+            --accent-gold: #cca633;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            background-color: #050407;
+            color: #e0e0e0;
+            font-family: 'Orbitron', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            perspective: 1400px;
+        }
+
+        /* Ruangan Arcade (Background Ambient) */
+        .arcade-room {
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 50% 30%, rgba(30, 25, 45, 0.4) 0%, rgba(3, 2, 5, 0.9) 80%),
+                linear-gradient(to bottom, #08060a, #020103);
+            z-index: 1;
+        }
+
+        /* 3D Cabinet Housing */
+        .arcade-cabinet-3d {
+            position: relative;
+            width: 860px;
+            max-width: 96vw;
+            height: 94vh;
+            max-height: 900px;
+            background: linear-gradient(135deg, #1b1622 0%, #0d0a11 100%);
+            border-radius: 16px 16px 8px 8px;
+            box-shadow: 
+                0 25px 60px rgba(0, 0, 0, 0.9),
+                inset 0 2px 5px rgba(255, 255, 255, 0.1),
+                inset 0 -5px 15px rgba(0, 0, 0, 0.8);
+            border: 5px solid #231e2d;
+            display: flex;
+            flex-direction: column;
+            transform-style: preserve-3d;
+            transform: rotateX(1.5deg);
+            z-index: 2;
+        }
+
+        /* Top Cabinet Marquee (Realistic / Non-Neon) */
+        .cabinet-marquee {
+            height: 80px;
+            background: linear-gradient(to bottom, #18141f, #0f0c14);
+            border-bottom: 4px solid #1a1622;
+            border-radius: 11px 11px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 25px;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.05), 0 4px 10px rgba(0,0,0,0.6);
+            position: relative;
+        }
+
+        .marquee-inner-glass {
+            background: #09080c;
+            border: 2px inset #332d3d;
+            padding: 8px 30px;
+            border-radius: 4px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.9);
+        }
+
+        .marquee-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            color: #d1cbdc;
+            text-shadow: 0 2px 3px rgba(0,0,0,0.9);
+            letter-spacing: 3px;
+        }
+
+        /* MULTI-SCREEN HOUSING */
+        .screens-housing {
+            flex: 1;
+            padding: 16px 20px;
+            display: grid;
+            grid-template-columns: 210px 1fr;
+            grid-template-rows: 1fr 130px;
+            gap: 14px;
+            background: #060508;
+            border-top: 2px solid #14111a;
+            border-bottom: 2px solid #14111a;
+        }
+
+        /* CRT Screen Base Style */
+        .crt-screen {
+            background: #020203;
+            border: 4px solid #1c1824;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.95), 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        /* Scanline Overlay */
+        .crt-screen::after {
+            content: " ";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .screen-glare {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, rgba(255,255,255,0.04) 0%, transparent 45%);
+            pointer-events: none;
+            z-index: 11;
+        }
+
+        /* Main Display Screen */
+        .main-display {
+            grid-column: 2;
+            grid-row: 1 / span 2;
+            background-size: cover;
+            background-position: center;
+            transition: background-image 0.35s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .main-display-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0.2) 30%, rgba(0,0,0,0.85) 100%);
+            z-index: 1;
+        }
+
+        .main-content {
+            position: relative;
+            z-index: 2;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .game-badge {
+            align-self: flex-start;
+            background: #2a2533;
+            color: #bfa133;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.55rem;
+            padding: 5px 10px;
+            border-radius: 3px;
+            margin-bottom: 8px;
+            border: 1px solid #4a3f5c;
+        }
+
+        .game-info-box {
+            background: rgba(12, 10, 15, 0.85);
+            border-left: 3px solid #bfa133;
+            padding: 12px;
+            border-radius: 0 6px 6px 0;
+            backdrop-filter: blur(4px);
+        }
+
+        .game-title {
+            font-size: 1.5rem;
+            color: #f0f0f0;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+
+        .game-desc {
+            font-size: 0.8rem;
+            color: #aaa;
+            line-height: 1.35;
+        }
+
+        /* Side Stats Screen */
+        .side-stats-screen {
+            grid-column: 1;
+            grid-row: 1;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: #050407;
+        }
+
+        .stats-header {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            color: #887aab;
+            border-bottom: 1px dashed #332d42;
+            padding-bottom: 5px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            margin: 5px 0;
+        }
+
+        .stat-label { color: #777; }
+        .stat-val { color: #ccc; font-weight: bold; }
+
+        .cabinet-status-led {
+            display: inline-block;
+            width: 8px; height: 8px;
+            background: #22aa44;
+            border-radius: 50%;
+            box-shadow: 0 0 6px #22aa44;
+            margin-right: 5px;
+        }
+
+        /* Mini Preview Screen */
+        .mini-preview-screen {
+            grid-column: 1;
+            grid-row: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            background: #050407;
+        }
+
+        .mini-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.45rem;
+            color: #887aab;
+            margin-bottom: 5px;
+        }
+
+        .mini-thumb {
+            width: 100%;
+            height: 65px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid #2a2533;
+        }
+
+        /* 3D CONTROL DECK PANEL (LOWER PART) */
+        .control-deck-3d {
+            height: 230px;
+            background: linear-gradient(180deg, #1b1622 0%, #0d0a11 100%);
+            border-top: 4px solid #2f283d;
+            transform: rotateX(12deg);
+            transform-origin: top center;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.95), inset 0 3px 8px rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 35px;
+            position: relative;
+        }
+
+        /* Back Button on Panel */
+        .btn-panel-back {
+            background: linear-gradient(135deg, #443c52, #241e2e);
+            border: 2px solid #5c5070;
+            color: #ddd;
+            padding: 10px 14px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #15111c, 0 5px 10px rgba(0,0,0,0.6);
+            transition: all 0.08s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-panel-back:active {
+            transform: translateY(5px);
+            box-shadow: 0 0 0 #15111c;
+        }
+
+        /* Draggable 3D Joystick Zone */
+        .joystick-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .joystick-base {
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, #252030 0%, #0a080f 100%);
+            border-radius: 50%;
+            border: 4px solid #3b334d;
+            box-shadow: inset 0 5px 10px #000, 0 6px 12px rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            touch-action: none;
+        }
+
+        .joystick-stick {
+            width: 22px;
+            height: 22px;
+            position: absolute;
+            transition: transform 0.08s ease-out;
+            cursor: grab;
+            z-index: 5;
+        }
+
+        .joystick-knob {
+            width: 48px;
+            height: 48px;
+            background: radial-gradient(circle at 35% 35%, #cc3333, #661111);
+            border-radius: 50%;
+            position: absolute;
+            top: -24px; left: -13px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.7), inset -3px -3px 6px rgba(0,0,0,0.6), inset 3px 3px 6px rgba(255,255,255,0.3);
+            border: 2px solid #aa2222;
+        }
+
+        .joystick-stick::before {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 38px;
+            background: linear-gradient(90deg, #555, #aaa, #333);
+            bottom: -18px;
+            left: 5px;
+            border-radius: 3px;
+        }
+
+        .deck-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.45rem;
+            color: #665c7a;
+            margin-top: 10px;
+        }
+
+        /* Controls Cluster (Arrows & Play R) */
+        .controls-cluster {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .arrow-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #283a5e, #111a2e);
+            border: 3px solid #3d5585;
+            box-shadow: 0 5px 0 #0a0e17, 0 5px 10px rgba(0,0,0,0.6);
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.75rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.08s ease;
+        }
+
+        .arrow-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #0a0e17;
+        }
+
+        /* Large 'R' Play Button */
+        .btn-arcade-play {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #229944, #114d22);
+            border: 4px solid #33cc66;
+            box-shadow: 0 8px 0 #0a2611, 0 8px 15px rgba(0,0,0,0.7), inset 0 -3px 6px rgba(0,0,0,0.5);
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.7);
+            transition: all 0.08s ease;
+        }
+
+        .btn-arcade-play:active, .btn-arcade-play.active {
+            transform: translateY(7px);
+            box-shadow: 0 1px 0 #0a2611;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .arcade-cabinet-3d { height: 98vh; }
+            .screens-housing {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr 90px;
+            }
+            .side-stats-screen { display: none; }
+            .main-display { grid-column: 1; grid-row: 1; }
+            .mini-preview-screen { grid-column: 1; grid-row: 2; }
+            .control-deck-3d { height: 180px; padding: 0 15px; }
+            .btn-arcade-play { width: 60px; height: 60px; font-size: 1.5rem; }
+            .arrow-btn { width: 42px; height: 42px; font-size: 0.6rem; }
+            .btn-panel-back { padding: 8px 10px; font-size: 0.45rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="arcade-room"></div>
+
+    <!-- 3D Cabinet -->
+    <div class="arcade-cabinet-3d">
+        
+        <!-- Marquee Header -->
+        <div class="cabinet-marquee">
+            <div class="marquee-inner-glass">
+                <div class="marquee-title">ARCADE SELECTION</div>
+            </div>
+        </div>
+
+        <!-- Multi-Screens -->
+        <div class="screens-housing">
+            
+            <!-- Side Stats Screen -->
+            <div class="crt-screen side-stats-screen">
+                <div class="screen-glare"></div>
+                <div class="stats-header">SYSTEM INFO</div>
+                <div>
+                    <div class="stat-row">
+                        <span class="stat-label">MACHINE:</span>
+                        <span class="stat-val">MK-IV</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">STATUS:</span>
+                        <span class="stat-val"><span class="cabinet-status-led"></span>ONLINE</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">TOTAL GAMES:</span>
+                        <span class="stat-val" id="statTotal">0</span>
+                    </div>
+                </div>
+                <div style="font-size: 0.45rem; color: #443f52; text-align: center; font-family: 'Press Start 2P';">
+                    ROM LOADED OK
+                </div>
+            </div>
+
+            <!-- Main Display Screen -->
+            <div class="crt-screen main-display" id="mainDisplay">
+                <div class="main-display-overlay"></div>
+                <div class="screen-glare"></div>
+                <div class="main-content">
+                    <div class="game-badge" id="gameBadge">GAME 1 / 1</div>
+                    <div class="game-info-box">
+                        <h2 class="game-title" id="gameTitle">LOADING...</h2>
+                        <p class="game-desc" id="gameDesc">Memuat data game.json...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mini Preview Screen -->
+            <div class="crt-screen mini-preview-screen">
+                <div class="screen-glare"></div>
+                <div class="mini-title">NEXT GAME</div>
+                <img id="miniThumb" class="mini-thumb" src="fckcfdedz.jpg" alt="Preview" onerror="this.src='https://picsum.photos/300/200?random=99'">
+            </div>
+
+        </div>
+
+        <!-- 3D Control Deck -->
+        <div class="control-deck-3d">
+            
+            <!-- Back Button Moved to Bottom Panel -->
+            <a href="index.html" class="btn-panel-back" id="btnBack">&lt; BACK</a>
+
+            <!-- Draggable 3D Joystick -->
+            <div class="joystick-container">
+                <div class="joystick-base" id="joystickBase">
+                    <div class="joystick-stick" id="joystickStick">
+                        <div class="joystick-knob"></div>
+                    </div>
+                </div>
+                <div class="deck-label">JOYSTICK</div>
+            </div>
+
+            <!-- Controls (<- , R Play , ->) -->
+            <div class="controls-cluster">
+                <button class="arrow-btn" id="btnPrev">&lt;-</button>
+                
+                <div style="display:flex; flex-direction:column; align-items:center;">
+                    <button class="btn-arcade-play" id="btnPlay">R</button>
+                    <div class="deck-label" style="color:#33cc66;">PLAY</div>
+                </div>
+
+                <button class="arrow-btn" id="btnNext">-&gt;</button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        let gamesData = [];
+        let currentIndex = 0;
+
+        // Web Audio API Sound Generator
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioCtx();
+        }
+
+        function playSound(freq, type = 'sine', duration = 0.08) {
+            try {
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {}
+        }
+
+        function playSelectSound() {
+            playSound(523.25, 'triangle', 0.1);
+            setTimeout(() => playSound(659.25, 'triangle', 0.15), 60);
+        }
+
+        function playMoveSound() {
+            playSound(180, 'sawtooth', 0.05);
+        }
+
+        // Fallback Default Data
+        const defaultGames = [
+            {
+                id: "1",
+                title: "ARCADE ACTION 1",
+                description: "Game klasik mesin arcade dengan tantangan seru.",
+                url: "/game1",
+                image: "fckcfdedz.jpg"
+            },
+            {
+                id: "2",
+                title: "CYBER RUNNER",
+                description: "Petualangan menembus lorong digital berkecepatan tinggi.",
+                url: "/game2",
+                image: "https://picsum.photos/800/450?random=2"
+            }
+        ];
+
+        async function loadGamesData() {
+            try {
+                const res = await fetch('game.json');
+                if (!res.ok) throw new Error("JSON not found");
+                gamesData = await res.json();
+            } catch (e) {
+                gamesData = defaultGames;
+            }
+            renderGame();
+        }
+
+        function renderGame() {
+            if (!gamesData.length) return;
+
+            const currentGame = gamesData[currentIndex];
+            const nextGame = gamesData[(currentIndex + 1) % gamesData.length];
+
+            const mainDisplay = document.getElementById('mainDisplay');
+            const imgUrl = currentGame.image || currentGame.url_image || 'fckcfdedz.jpg';
+            
+            mainDisplay.style.backgroundImage = `url('${imgUrl}'), url('https://picsum.photos/800/450?random=99')`;
+            document.getElementById('gameTitle').textContent = currentGame.title || `GAME ID: ${currentGame.id}`;
+            document.getElementById('gameDesc').textContent = currentGame.description || `Tujuan URL: ${currentGame.url || currentGame['/game']}`;
+            document.getElementById('gameBadge').textContent = `GAME ${currentIndex + 1} / ${gamesData.length}`;
+
+            document.getElementById('statTotal').textContent = gamesData.length;
+
+            const nextImgUrl = nextGame.image || nextGame.url_image || 'fckcfdedz.jpg';
+            document.getElementById('miniThumb').src = nextImgUrl;
+        }
+
+        function nextGame() {
+            currentIndex = (currentIndex + 1) % gamesData.length;
+            playMoveSound();
+            renderGame();
+        }
+
+        function prevGame() {
+            currentIndex = (currentIndex - 1 + gamesData.length) % gamesData.length;
+            playMoveSound();
+            renderGame();
+        }
+
+        function launchGame() {
+            if (!gamesData.length) return;
+            playSelectSound();
+            const currentGame = gamesData[currentIndex];
+            const targetUrl = currentGame.url || currentGame['/game'] || `/game${currentGame.id}`;
+
+            const playBtn = document.getElementById('btnPlay');
+            playBtn.classList.add('active');
+            setTimeout(() => playBtn.classList.remove('active'), 200);
+
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 250);
+        }
+
+        // Draggable Joystick Physics
+        const joystickBase = document.getElementById('joystickBase');
+        const joystickStick = document.getElementById('joystickStick');
+        let isDragging = false;
+        let startX = 0;
+
+        function handleDragStart(e) {
+            isDragging = true;
+            startX = e.clientX || (e.touches && e.touches[0].clientX);
+            initAudio();
+        }
+
+        function handleDragMove(e) {
+            if (!isDragging) return;
+            const currentX = e.clientX || (e.touches && e.touches[0].clientX);
+            const deltaX = currentX - startX;
+            const limitedX = Math.max(-30, Math.min(30, deltaX));
+
+            joystickStick.style.transform = `translate(${limitedX}px, 0px) rotate(${limitedX * 0.4}deg)`;
+
+            if (deltaX > 25) {
+                nextGame();
+                isDragging = false;
+                resetJoystick();
+            } else if (deltaX < -25) {
+                prevGame();
+                isDragging = false;
+                resetJoystick();
+            }
+        }
+
+        function resetJoystick() {
+            isDragging = false;
+            joystickStick.style.transform = `translate(0px, 0px) rotate(0deg)`;
+        }
+
+        joystickBase.addEventListener('mousedown', handleDragStart);
+        window.addEventListener('mousemove', handleDragMove);
+        window.addEventListener('mouseup', resetJoystick);
+
+        joystickBase.addEventListener('touchstart', handleDragStart, { passive: true });
+        window.addEventListener('touchmove', handleDragMove, { passive: true });
+        window.addEventListener('touchend', resetJoystick);
+
+        document.getElementById('btnNext').addEventListener('click', nextGame);
+        document.getElementById('btnPrev').addEventListener('click', prevGame);
+        document.getElementById('btnPlay').addEventListener('click', launchGame);
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextGame();
+            if (e.key === 'ArrowLeft') prevGame();
+            if (e.key.toLowerCase() === 'r' || e.key === 'Enter') launchGame();
+        });
+
+        loadGamesData();
+    </script>
+</body>
+</html>
