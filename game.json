@@ -1,0 +1,30 @@
+[
+  {
+    "id": "1",
+    "title": "GTA SAN ANDREAS",
+    "description": "Petualangan CJ menguasai Los Santos dan membalas dendam keluarga.",
+    "url": "/game1",
+    "image": "fckcfdedz.jpg"
+  },
+  {
+    "id": "2",
+    "title": "GTA VICE CITY",
+    "description": "Kisah Tommy Vercetti membangun kerajaan kriminal di kota Vice City.",
+    "url": "/game2",
+    "image": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    "id": "3",
+    "title": "GTA IV LIBERTY CITY",
+    "description": "Kisah Niko Bellic mengejar Impian Amerika di Liberty City.",
+    "url": "/game3",
+    "image": "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    "id": "4",
+    "title": "GTA V LOS SANTOS",
+    "description": "Aksi tiga kriminal Franklin, Michael, dan Trevor dalam perampokan besar.",
+    "url": "https://google.com",
+    "image": "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=800&q=80"
+  }
+]
