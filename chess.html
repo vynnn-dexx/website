@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chess.com Real Edition - Vercel Ready</title>
+  
+  <!-- Chess.js (Logika Aturan Catur) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 12px;
+    }
+
+    header {
+      margin: 10px 0;
+      text-align: center;
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 1.3rem;
+      color: #ffffff;
+      letter-spacing: 1px;
+      font-weight: 800;
+    }
+
+    .btn-back {
+      background-color: #2c2c2c;
+      color: #fff;
+      border: 1px solid #444;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+
+    .btn-back:hover {
+      background-color: #444;
+    }
+
+    .main-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    /* Papan Catur Grid Model Chess.com */
+    #board {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+      width: 100vw;
+      max-width: 400px;
+      height: 100vw;
+      max-height: 400px;
+      border: 3px solid #333;
+      border-radius: 6px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
+    }
+
+    .square {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      user-select: none;
+    }
+
+    /* Warna Petak Chess.com Dark Edition */
+    .square.light {
+      background-color: #b0b0b0;
+    }
+
+    .square.dark {
+      background-color: #383838;
+    }
+
+    .square.selected {
+      background-color: #7b9c54 !important;
+    }
+
+    .square.highlight {
+      background-color: #648045 !important;
+    }
+
+    /* Styling Gambar Bidak Catur (Gaya Chess.com RL) */
+    .piece {
+      width: 85%;
+      height: 85%;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      pointer-events: none;
+    }
+
+    /* Panel Kontrol & Status */
+    .control-panel {
+      background-color: #1e1e1e;
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border: 1px solid #2a2a2a;
+    }
+
+    .status-box {
+      background-color: #2a2a2a;
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      text-align: center;
+      border-left: 4px solid #ffffff;
+    }
+
+    .setting-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    label {
+      font-size: 0.85rem;
+      color: #aaa;
+    }
+
+    select, button {
+      background-color: #2c2c2c;
+      color: #fff;
+      border: 1px solid #444;
+      padding: 6px 10px;
+      border-radius: 5px;
+      font-size: 0.85rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background-color: #ffffff;
+      color: #000000;
+      font-weight: bold;
+      padding: 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: #cccccc;
+    }
+
+    /* Riwayat Langkah & Analisis */
+    .move-history-container {
+      background-color: #1e1e1e;
+      width: 100%;
+      border-radius: 8px;
+      padding: 10px;
+      border: 1px solid #2a2a2a;
+      max-height: 130px;
+      overflow-y: auto;
+    }
+
+    .history-title {
+      font-size: 0.75rem;
+      color: #888;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .move-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.8rem;
+    }
+
+    .move-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 6px;
+      background-color: #252525;
+      border-radius: 4px;
+    }
+
+    .move-num {
+      color: #666;
+      width: 25px;
+    }
+
+    .move-notation {
+      flex-grow: 1;
+      font-weight: 600;
+      color: #ddd;
+    }
+
+    .badge {
+      font-size: 0.65rem;
+      font-weight: bold;
+      padding: 2px 5px;
+      border-radius: 3px;
+      text-transform: uppercase;
+    }
+
+    .badge-brilliant { background-color: #1baca6; color: #fff; }
+    .badge-best      { background-color: #96bc4b; color: #fff; }
+    .badge-good      { background-color: #a3a3a3; color: #000; }
+    .badge-inaccuracy{ background-color: #f0c15c; color: #000; }
+    .badge-mistake   { background-color: #e6912c; color: #fff; }
+    .badge-blunder   { background-color: #fa412d; color: #fff; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="game.html" class="btn-back">&larr; Kembali</a>
+    <h1>CHESS.COM RL</h1>
+    <div style="width: 60px;"></div> <!-- Spacer penyeimbang header -->
+  </header>
+
+  <div class="main-container">
+    <!-- Panel Kontrol -->
+    <div class="control-panel">
+      <div id="status" class="status-box">Giliran Putih</div>
+
+      <div class="setting-group">
+        <label for="mode">Mode Main:</label>
+        <select id="mode">
+          <option value="bot">Lawan Bot AI</option>
+          <option value="pvp">2 Pemain (1 HP)</option>
+        </select>
+      </div>
+
+      <div class="setting-group" id="difficulty-container">
+        <label for="difficulty">Tingkat Bot:</label>
+        <select id="difficulty">
+          <option value="easy">Mudah (Acak)</option>
+          <option value="medium" selected>Sedang (Pintar)</option>
+        </select>
+      </div>
+
+      <button id="resetBtn" class="btn-primary">Main Lagi / Reset</button>
+    </div>
+
+    <!-- Papan Catur -->
+    <div id="board"></div>
+
+    <!-- Riwayat Langkah -->
+    <div class="move-history-container">
+      <div class="history-title">Riwayat Langkah & Analisis</div>
+      <div id="moveList" class="move-list"></div>
+    </div>
+  </div>
+
+  <script>
+    let game = new Chess();
+    let selectedSquare = null;
+    let possibleMoves = [];
+    let moveCount = 1;
+
+    // URL aset gambar resmi gaya Chess.com (Wikipedia set SVG yang bersih & tajam)
+    const pieceImages = {
+      p: 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg',
+      r: 'https://upload.wikimedia.org/wikipedia/commons/f/ff/Chess_rdt45.svg',
+      n: 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Chess_ndt45.svg',
+      b: 'https://upload.wikimedia.org/wikipedia/commons/9/98/Chess_bdt45.svg',
+      q: 'https://upload.wikimedia.org/wikipedia/commons/4/47/Chess_qdt45.svg',
+      k: 'https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg',
+      P: 'https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg',
+      R: 'https://upload.wikimedia.org/wikipedia/commons/7/72/Chess_rlt45.svg',
+      N: 'https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg',
+      B: 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg',
+      Q: 'https://upload.wikimedia.org/wikipedia/commons/1/15/Chess_qlt45.svg',
+      K: 'https://upload.wikimedia.org/wikipedia/commons/4/42/Chess_klt45.svg'
+    };
+
+    const evalBadges = [
+      { name: 'Brilliant', class: 'badge-brilliant', weight: 0.05 },
+      { name: 'Best', class: 'badge-best', weight: 0.45 },
+      { name: 'Good', class: 'badge-good', weight: 0.25 },
+      { name: 'Inaccuracy', class: 'badge-inaccuracy', weight: 0.10 },
+      { name: 'Mistake', class: 'badge-mistake', weight: 0.10 },
+      { name: 'Blunder', class: 'badge-blunder', weight: 0.05 }
+    ];
+
+    function getRandomBadge(move) {
+      if (move.captured || move.san.includes('+') || move.san.includes('#')) {
+        return Math.random() > 0.4 ? evalBadges[0] : evalBadges[1];
+      }
+      let rand = Math.random();
+      let cumulative = 0;
+      for (let b of evalBadges) {
+        cumulative += b.weight;
+        if (rand <= cumulative) return b;
+      }
+      return evalBadges[1];
+    }
+
+    function renderBoard() {
+      const boardEl = document.getElementById('board');
+      boardEl.innerHTML = '';
+
+      let boardData = game.board();
+      for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+          let squareId = String.fromCharCode(97 + c) + (8 - r);
+          let squareDiv = document.createElement('div');
+          let isDark = (r + c) % 2 === 1;
+          
+          squareDiv.className = `square ${isDark ? 'dark' : 'light'}`;
+          squareDiv.dataset.square = squareId;
+
+          let piece = boardData[r][c];
+          if (piece) {
+            let key = piece.color === 'w' ? piece.type.toUpperCase() : piece.type.toLowerCase();
+            let pieceDiv = document.createElement('div');
+            pieceDiv.className = 'piece';
+            pieceDiv.style.backgroundImage = `url('${pieceImages[key]}')`;
+            squareDiv.appendChild(pieceDiv);
+          }
+
+          if (selectedSquare === squareId) {
+            squareDiv.classList.add('selected');
+          } else if (possibleMoves.includes(squareId)) {
+            squareDiv.classList.add('highlight');
+          }
+
+          squareDiv.addEventListener('click', () => onSquareClick(squareId));
+          boardEl.appendChild(squareDiv);
+        }
+      }
+      updateStatus();
+    }
+
+    function onSquareClick(squareId) {
+      let mode = document.getElementById('mode').value;
+      if (mode === 'bot' && game.turn() === 'b') return;
+
+      if (selectedSquare === null) {
+        let piece = game.get(squareId);
+        if (piece && piece.color === game.turn()) {
+          selectedSquare = squareId;
+          possibleMoves = game.moves({ square: squareId, verbose: true }).map(m => m.to);
+          renderBoard();
+        }
+      } else {
+        if (possibleMoves.includes(squareId)) {
+          let move = game.move({
+            from: selectedSquare,
+            to: squareId,
+            promotion: 'q'
+          });
+
+          if (move) {
+            recordMove(move);
+            selectedSquare = null;
+            possibleMoves = [];
+            renderBoard();
+
+            if (mode === 'bot' && !game.game_over()) {
+              setTimeout(makeBotMove, 300);
+            }
+          }
+        } else {
+          selectedSquare = null;
+          possibleMoves = [];
+          renderBoard();
+          let piece = game.get(squareId);
+          if (piece && piece.color === game.turn()) {
+            selectedSquare = squareId;
+            possibleMoves = game.moves({ square: squareId, verbose: true }).map(m => m.to);
+            renderBoard();
+          }
+        }
+      }
+    }
+
+    function makeBotMove() {
+      if (game.game_over()) return;
+      let moves = game.moves({ verbose: true });
+      if (moves.length === 0) return;
+
+      let difficulty = document.getElementById('difficulty').value;
+      let selectedMove;
+
+      if (difficulty === 'medium') {
+        let smartMoves = moves.filter(m => m.captured || m.san.includes('+'));
+        selectedMove = smartMoves.length > 0 ? smartMoves[Math.floor(Math.random() * smartMoves.length)] : moves[Math.floor(Math.random() * moves.length)];
+      } else {
+        selectedMove = moves[Math.floor(Math.random() * moves.length)];
+      }
+
+      let move = game.move(selectedMove);
+      if (move) {
+        recordMove(move);
+        renderBoard();
+      }
+    }
+
+    function recordMove(move) {
+      let badge = getRandomBadge(move);
+      let turnLabel = move.color === 'w' ? 'Putih' : 'Hitam';
+      
+      let rowHtml = `
+        <div class="move-row">
+          <span class="move-num">#${moveCount}</span>
+          <span class="move-notation"><b>${turnLabel}:</b> ${move.san}</span>
+          <span class="badge ${badge.class}">${badge.name}</span>
+        </div>
+      `;
+      
+      document.getElementById('moveList').insertAdjacentHTML('afterbegin', rowHtml);
+      if (move.color === 'b') moveCount++;
+    }
+
+    function updateStatus() {
+      let status = '';
+      let moveColor = game.turn() === 'w' ? 'Putih' : 'Hitam';
+
+      if (game.in_checkmate()) {
+        status = 'Skakmat! ' + (game.turn() === 'w' ? 'Hitam' : 'Putih') + ' Menang!';
+      } else if (game.in_draw()) {
+        status = 'Permainan Remis (Draw)!';
+      } else {
+        status = 'Giliran: ' + moveColor;
+        if (game.in_check()) {
+          status += ' (SKAK!)';
+        }
+      }
+      document.getElementById('status').textContent = status;
+    }
+
+    // Event Listeners
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      game.reset();
+      selectedSquare = null;
+      possibleMoves = [];
+      document.getElementById('moveList').innerHTML = '';
+      moveCount = 1;
+      renderBoard();
+    });
+
+    document.getElementById('mode').addEventListener('change', (e) => {
+      let diffContainer = document.getElementById('difficulty-container');
+      diffContainer.style.display = e.target.value === 'pvp' ? 'none' : 'flex';
+      game.reset();
+      selectedSquare = null;
+      possibleMoves = [];
+      document.getElementById('moveList').innerHTML = '';
+      moveCount = 1;
+      renderBoard();
+    });
+
+    // Inisialisasi Pertama
+    renderBoard();
+  </script>
+</body>
+</html>
