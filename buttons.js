@@ -57,4 +57,16 @@ const scrapeButtonsData = [
     previewUrl: "#",
     targetUrl: "codenya.html"
   }
+,
+  {
+    id: "game menu",
+    title: "game",
+    description: "ada beberapa game disini",
+    author: "ARCVN",
+    method: "ANY",
+    category: "game",
+    imageUrl: "https://files.catbox.moe/diu9bo.png",
+    previewUrl: "#",
+    targetUrl: "game.html"
+  }
 ];
