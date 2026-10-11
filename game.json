@@ -5,6 +5,13 @@
     "description": "game catur single player / multiplayer.",
     "url": "/chess.html",
     "image": "assets/chess.png"
-  }
+  },
+{
+"id": "1",
+    "title": "snake",
+    "description": "game cacing single player.",
+    "url": "/cacing.html",
+    "image": "assets/cancing.jpg"
+}
 ]
 
