@@ -36,7 +36,6 @@
             perspective: 1400px;
         }
 
-        /* Ruangan Arcade (Background Ambient) */
         .arcade-room {
             position: absolute;
             inset: 0;
@@ -46,7 +45,6 @@
             z-index: 1;
         }
 
-        /* 3D Cabinet Housing */
         .arcade-cabinet-3d {
             position: relative;
             width: 860px;
@@ -67,7 +65,6 @@
             z-index: 2;
         }
 
-        /* Top Cabinet Marquee (Realistic / Non-Neon) */
         .cabinet-marquee {
             height: 80px;
             background: linear-gradient(to bottom, #18141f, #0f0c14);
@@ -97,7 +94,6 @@
             letter-spacing: 3px;
         }
 
-        /* MULTI-SCREEN HOUSING */
         .screens-housing {
             flex: 1;
             padding: 16px 20px;
@@ -110,7 +106,6 @@
             border-bottom: 2px solid #14111a;
         }
 
-        /* CRT Screen Base Style */
         .crt-screen {
             background: #020203;
             border: 4px solid #1c1824;
@@ -120,7 +115,6 @@
             box-shadow: inset 0 0 25px rgba(0,0,0,0.95), 0 4px 10px rgba(0,0,0,0.5);
         }
 
-        /* Scanline Overlay */
         .crt-screen::after {
             content: " ";
             position: absolute;
@@ -139,12 +133,12 @@
             z-index: 11;
         }
 
-        /* Main Display Screen */
         .main-display {
             grid-column: 2;
             grid-row: 1 / span 2;
             background-size: cover;
             background-position: center;
+            background-repeat: no-repeat;
             transition: background-image 0.35s ease-in-out;
             display: flex;
             flex-direction: column;
@@ -201,7 +195,6 @@
             line-height: 1.35;
         }
 
-        /* Side Stats Screen */
         .side-stats-screen {
             grid-column: 1;
             grid-row: 1;
@@ -239,7 +232,6 @@
             margin-right: 5px;
         }
 
-        /* Mini Preview Screen */
         .mini-preview-screen {
             grid-column: 1;
             grid-row: 2;
@@ -266,7 +258,6 @@
             border: 1px solid #2a2533;
         }
 
-        /* 3D CONTROL DECK PANEL (LOWER PART) */
         .control-deck-3d {
             height: 230px;
             background: linear-gradient(180deg, #1b1622 0%, #0d0a11 100%);
@@ -281,7 +272,6 @@
             position: relative;
         }
 
-        /* Back Button on Panel */
         .btn-panel-back {
             background: linear-gradient(135deg, #443c52, #241e2e);
             border: 2px solid #5c5070;
@@ -304,7 +294,6 @@
             box-shadow: 0 0 0 #15111c;
         }
 
-        /* Draggable 3D Joystick Zone */
         .joystick-container {
             display: flex;
             flex-direction: column;
@@ -364,7 +353,6 @@
             margin-top: 10px;
         }
 
-        /* Controls Cluster (Arrows & Play R) */
         .controls-cluster {
             display: flex;
             align-items: center;
@@ -393,7 +381,6 @@
             box-shadow: 0 1px 0 #0a0e17;
         }
 
-        /* Large 'R' Play Button */
         .btn-arcade-play {
             width: 75px;
             height: 75px;
@@ -418,7 +405,6 @@
             box-shadow: 0 1px 0 #0a2611;
         }
 
-        /* Responsive design */
         @media (max-width: 768px) {
             .arcade-cabinet-3d { height: 98vh; }
             .screens-housing {
@@ -439,20 +425,14 @@
 
     <div class="arcade-room"></div>
 
-    <!-- 3D Cabinet -->
     <div class="arcade-cabinet-3d">
-        
-        <!-- Marquee Header -->
         <div class="cabinet-marquee">
             <div class="marquee-inner-glass">
                 <div class="marquee-title">ARCADE SELECTION</div>
             </div>
         </div>
 
-        <!-- Multi-Screens -->
         <div class="screens-housing">
-            
-            <!-- Side Stats Screen -->
             <div class="crt-screen side-stats-screen">
                 <div class="screen-glare"></div>
                 <div class="stats-header">SYSTEM INFO</div>
@@ -475,7 +455,6 @@
                 </div>
             </div>
 
-            <!-- Main Display Screen -->
             <div class="crt-screen main-display" id="mainDisplay">
                 <div class="main-display-overlay"></div>
                 <div class="screen-glare"></div>
@@ -488,22 +467,16 @@
                 </div>
             </div>
 
-            <!-- Mini Preview Screen -->
             <div class="crt-screen mini-preview-screen">
                 <div class="screen-glare"></div>
                 <div class="mini-title">NEXT GAME</div>
-                <img id="miniThumb" class="mini-thumb" src="fckcfdedz.jpg" alt="Preview" onerror="this.src='https://picsum.photos/300/200?random=99'">
+                <img id="miniThumb" class="mini-thumb" src="" alt="Preview">
             </div>
-
         </div>
 
-        <!-- 3D Control Deck -->
         <div class="control-deck-3d">
-            
-            <!-- Back Button Moved to Bottom Panel -->
             <a href="index.html" class="btn-panel-back" id="btnBack">&lt; BACK</a>
 
-            <!-- Draggable 3D Joystick -->
             <div class="joystick-container">
                 <div class="joystick-base" id="joystickBase">
                     <div class="joystick-stick" id="joystickStick">
@@ -513,7 +486,6 @@
                 <div class="deck-label">JOYSTICK</div>
             </div>
 
-            <!-- Controls (<- , R Play , ->) -->
             <div class="controls-cluster">
                 <button class="arrow-btn" id="btnPrev">&lt;-</button>
                 
@@ -524,16 +496,13 @@
 
                 <button class="arrow-btn" id="btnNext">-&gt;</button>
             </div>
-
         </div>
-
     </div>
 
     <script>
         let gamesData = [];
         let currentIndex = 0;
 
-        // Web Audio API Sound Generator
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         let audioCtx = null;
 
@@ -566,31 +535,13 @@
             playSound(180, 'sawtooth', 0.05);
         }
 
-        // Fallback Default Data
-        const defaultGames = [
-            {
-                id: "1",
-                title: "ARCADE ACTION 1",
-                description: "Game klasik mesin arcade dengan tantangan seru.",
-                url: "/game1",
-                image: "fckcfdedz.jpg"
-            },
-            {
-                id: "2",
-                title: "CYBER RUNNER",
-                description: "Petualangan menembus lorong digital berkecepatan tinggi.",
-                url: "/game2",
-                image: "https://picsum.photos/800/450?random=2"
-            }
-        ];
-
         async function loadGamesData() {
             try {
                 const res = await fetch('game.json');
                 if (!res.ok) throw new Error("JSON not found");
                 gamesData = await res.json();
             } catch (e) {
-                gamesData = defaultGames;
+                gamesData = [];
             }
             renderGame();
         }
@@ -602,17 +553,30 @@
             const nextGame = gamesData[(currentIndex + 1) % gamesData.length];
 
             const mainDisplay = document.getElementById('mainDisplay');
-            const imgUrl = currentGame.image || currentGame.url_image || 'fckcfdedz.jpg';
+            const imgUrl = currentGame.image || currentGame.url_image || '';
             
-            mainDisplay.style.backgroundImage = `url('${imgUrl}'), url('https://picsum.photos/800/450?random=99')`;
+            // Murni membaca dari game.json tanpa gambar random/fallback
+            if (imgUrl) {
+                mainDisplay.style.backgroundImage = `url('${imgUrl}')`;
+            } else {
+                mainDisplay.style.backgroundImage = 'none';
+            }
+
             document.getElementById('gameTitle').textContent = currentGame.title || `GAME ID: ${currentGame.id}`;
-            document.getElementById('gameDesc').textContent = currentGame.description || `Tujuan URL: ${currentGame.url || currentGame['/game']}`;
+            document.getElementById('gameDesc').textContent = currentGame.description || '';
             document.getElementById('gameBadge').textContent = `GAME ${currentIndex + 1} / ${gamesData.length}`;
 
             document.getElementById('statTotal').textContent = gamesData.length;
 
-            const nextImgUrl = nextGame.image || nextGame.url_image || 'fckcfdedz.jpg';
-            document.getElementById('miniThumb').src = nextImgUrl;
+            const nextImgUrl = nextGame.image || nextGame.url_image || '';
+            const miniThumbEl = document.getElementById('miniThumb');
+            if (nextImgUrl) {
+                miniThumbEl.src = nextImgUrl;
+                miniThumbEl.style.display = 'block';
+            } else {
+                miniThumbEl.src = '';
+                miniThumbEl.style.display = 'none';
+            }
         }
 
         function nextGame() {
@@ -642,7 +606,6 @@
             }, 250);
         }
 
-        // Draggable Joystick Physics
         const joystickBase = document.getElementById('joystickBase');
         const joystickStick = document.getElementById('joystickStick');
         let isDragging = false;
