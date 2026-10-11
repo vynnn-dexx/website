@@ -7,11 +7,18 @@
     "image": "assets/chess.png"
   },
 {
-"id": "1",
+"id": "2",
     "title": "snake",
     "description": "game cacing single player.",
     "url": "/cacing.html",
     "image": "assets/cancing.jpg"
+},
+  {
+  "id": "3",
+    "title": "survive arc",
+    "description": "game survival single player .",
+    "url": "/surviveio.html",
+    "image": "assets/chess.png"
 }
 ]
 
